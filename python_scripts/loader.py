@@ -66,5 +66,15 @@ plt.figure()
 plt.imshow(overrides_map, cmap=cmap_7, norm=norm)
 plt.colorbar(ticks=bounds_val)
 plt.savefig('../maps/overrides_map.png')
+plt.close()
+
+
+cmap_2 = matplotlib.colors.ListedColormap(["steelblue", "greenyellow"])
+valid_maps = (overrides_map == 0).astype(np.uint8)
+plt.figure()
+plt.imshow(valid_maps, cmap=cmap_2)
+# plt.colorbar(ticks=bounds_val)
+plt.savefig('../maps/valid_map.png')
+
 
 plt.show()
