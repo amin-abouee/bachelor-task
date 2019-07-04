@@ -46,6 +46,8 @@ import matplotlib
 bounds = [0, 8, 32, 64, 88, 104, 120, 135]
 bounds_val = [x for x in res.keys()]
 print(bounds_val)
+for x in res.keys():
+    print("{}, {:08b}".format(x,x))
 
 # cmap_10 = plt.cm.get_cmap('Dark2', 7) 
 cmap_7 = matplotlib.colors.ListedColormap(["limegreen", "navy", "dodgerblue", "royalblue", "mediumblue", "orange", "firebrick"])
@@ -55,7 +57,7 @@ norm = matplotlib.colors.BoundaryNorm(bounds, cmap_7.N, clip=True)
 plt.figure()
 plt.imshow(elevation_map, cmap="viridis")
 plt.colorbar()
-plt.savefig('elevation_map.png')
+plt.savefig('../maps/elevation_map.png')
 plt.close()
 
 # color_img = cv2.cvtColor(overrides_map, cv2.COLOR_GRAY2RGB)
@@ -63,6 +65,6 @@ plt.close()
 plt.figure()
 plt.imshow(overrides_map, cmap=cmap_7, norm=norm)
 plt.colorbar(ticks=bounds_val)
-plt.savefig('overrides_map.png')
+plt.savefig('../maps/overrides_map.png')
 
 plt.show()
