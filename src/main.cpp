@@ -1,8 +1,11 @@
 #include "visualizer.h"
+#include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
 #include <exception>
+#include <unordered_set>
+#include <bitset>
 
 #ifdef _MSC_VER
 static const char* PATH_SEP = "\\";
@@ -19,7 +22,8 @@ enum OverrideFlags
 };
 
 // Some constants
-enum {
+enum
+{
     IMAGE_DIM = 2048, // Width and height of the elevation and overrides image
     
     ROVER_X = 159,
@@ -42,6 +46,8 @@ std::ifstream::pos_type fileSize(const std::string& filename)
 
 std::vector<uint8_t> loadFile(const std::string& filename, size_t expectedFileSize)
 {
+    std::cout << "filename: " << filename << std::endl;
+    std::cout << "expected File Size: " << expectedFileSize << std::endl;
     size_t fsize = fileSize(filename);
     if (fsize != expectedFileSize)
     {
@@ -67,7 +73,7 @@ bool donut(int x, int y, int x1, int y1)
 
 int main(int argc, char** argv)
 {
-    const size_t expectedFileSize = IMAGE_DIM * IMAGE_DIM;
+    constexpr size_t expectedFileSize = IMAGE_DIM * IMAGE_DIM;
     // Address assets relative to application location
     std::string anchor = std::string(".") + PATH_SEP;
     std::string pname = argv[0];
@@ -76,8 +82,31 @@ int main(int argc, char** argv)
     {
         anchor = pname.substr(0, lastpos) + PATH_SEP;
     }
-    auto elevation = loadFile(anchor + "assets" + PATH_SEP + "elevation.data", expectedFileSize);
-    auto overrides = loadFile(anchor + "assets" + PATH_SEP + "overrides.data", expectedFileSize);
+    // std::cout << "anchor: " << anchor << std::endl;
+    auto elevation = loadFile("../assets/elevation.data", expectedFileSize);
+    auto overrides = loadFile("../assets/overrides.data", expectedFileSize);
+
+    // for (int i = 1250; i < 1300; i++)
+    // {
+    //     for (int j = 1550; j < 1600; j++)
+    //     {
+    //         int idx = i * IMAGE_DIM + j;
+    //         std::cout << (int)overrides[idx] << " ";
+    //     }
+    //     std::cout << std::endl;
+    // }
+
+    std::unordered_set<uint8_t> set;
+    for (const int &i: overrides) {
+        set.insert(i);
+    }
+
+    for (const int &i: set) {
+        std::string binary = std::bitset<8>(i).to_string();
+        std::cout << i << " " << binary << std::endl;
+    }
+
+
     std::ofstream of("pic.bmp", std::ofstream::binary);
     
     visualizer::writeBMP(
