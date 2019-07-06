@@ -1,0 +1,14 @@
+{
+    "file_paths":
+    {
+        "elevation_filepath" : "/Users/amin/Workspace/cplusplus/bachelor-task/assets/elevation.data",
+        "overrides_filepath" : "/Users/amin/Workspace/cplusplus/bachelor-task/assets/overrides.data"
+    },
+    "constraints":
+    {
+        "image_dimension" : 2048,
+        "rover_loc" : [ 159, 1520 ],
+        "bachelor_loc" : [ 1303, 85 ],
+        "wedding_loc" : [ 1577, 1294 ]
+    }
+}

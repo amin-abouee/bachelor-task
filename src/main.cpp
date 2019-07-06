@@ -1,4 +1,3 @@
-#include "visualizer.h"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -6,6 +5,10 @@
 #include <exception>
 #include <unordered_set>
 #include <bitset>
+
+#include <nlohmann/json.hpp>
+
+#include "visualizer.h"
 
 #ifdef _MSC_VER
 static const char* PATH_SEP = "\\";
@@ -22,17 +25,17 @@ enum OverrideFlags
 };
 
 // Some constants
-enum
-{
-    IMAGE_DIM = 2048, // Width and height of the elevation and overrides image
+// enum
+// {
+//     IMAGE_DIM = 2048, // Width and height of the elevation and overrides image
     
-    ROVER_X = 159,
-    ROVER_Y = 1520,
-    BACHELOR_X = 1303,
-    BACHELOR_Y = 85,
-    WEDDING_X = 1577,
-    WEDDING_Y = 1294
-};
+//     ROVER_X = 159,
+//     ROVER_Y = 1520,
+//     BACHELOR_X = 1303,
+//     BACHELOR_Y = 85,
+//     WEDDING_X = 1577,
+//     WEDDING_Y = 1294
+// };
 
 std::ifstream::pos_type fileSize(const std::string& filename)
 {
@@ -44,16 +47,16 @@ std::ifstream::pos_type fileSize(const std::string& filename)
     return in.tellg(); 
 }
 
-std::vector<uint8_t> loadFile(const std::string& filename, size_t expectedFileSize)
+std::vector<uint8_t> loadFile(const std::string& filename, const uint32_t expectedFileSize)
 {
-    std::cout << "filename: " << filename << std::endl;
-    std::cout << "expected File Size: " << expectedFileSize << std::endl;
-    size_t fsize = fileSize(filename);
+    // std::cout << "filename: " << filename << std::endl;
+    // std::cout << "expected File Size: " << expectedFileSize << std::endl;
+    const std::size_t fsize = fileSize(filename);
     if (fsize != expectedFileSize)
     {
         throw std::exception();
     }
-    std::vector<uint8_t> data(fsize);
+    std::vector<uint8_t> data(fsize, 0);
     std::ifstream ifile(filename, std::ifstream::binary);
     if (!ifile.good())
     {
@@ -73,18 +76,41 @@ bool donut(int x, int y, int x1, int y1)
 
 int main(int argc, char** argv)
 {
-    constexpr size_t expectedFileSize = IMAGE_DIM * IMAGE_DIM;
+
+    std::ifstream fileReader( argv[1] );
+    const nlohmann::json configFile = nlohmann::json::parse( fileReader );
+    // nlohmann::json configFile;
+    // fileReader >> configFile;
+    const nlohmann::json& filePathsJsonNode = configFile[ "file_paths" ];
+
+    const auto elevationFilepath = filePathsJsonNode[ "elevation_filepath" ].get< std::string >();
+    const auto overridesFilepath = filePathsJsonNode[ "overrides_filepath" ].get< std::string >();
+    // std::cout << elevationFilepath << std::endl;
+    // std::cout << overridesFilepath << std::endl;
+
+    const nlohmann::json& constraintsJsonNode = configFile[ "constraints" ];
+    const uint32_t imageDimension = constraintsJsonNode["image_dimension"].get<uint32_t>();
+    std::cout << "image dimension: " << imageDimension << std::endl;
+    const auto roverLoc = constraintsJsonNode["rover_loc"].get<std::pair<uint32_t, uint32_t>>();
+    const auto bachelorLoc = constraintsJsonNode["bachelor_loc"].get<std::pair<uint32_t, uint32_t>>();
+    const auto weddingLoc = constraintsJsonNode["wedding_loc"].get<std::pair<uint32_t, uint32_t>>();
+    std::cout << roverLoc.first << " " << roverLoc.second << std::endl;
+    std::cout << bachelorLoc.first << " " << bachelorLoc.second << std::endl;
+    std::cout << weddingLoc.first << " " << weddingLoc.second << std::endl;
+
+
+    const uint32_t expectedFileSize = imageDimension * imageDimension;
     // Address assets relative to application location
-    std::string anchor = std::string(".") + PATH_SEP;
-    std::string pname = argv[0];
-    auto lastpos = pname.find_last_of("/\\");
-    if (lastpos != std::string::npos)
-    {
-        anchor = pname.substr(0, lastpos) + PATH_SEP;
-    }
+    // std::string anchor = std::string(".") + PATH_SEP;
+    // std::string pname = argv[0];
+    // auto lastpos = pname.find_last_of("/\\");
+    // if (lastpos != std::string::npos)
+    // {
+    //     anchor = pname.substr(0, lastpos) + PATH_SEP;
+    // }
     // std::cout << "anchor: " << anchor << std::endl;
-    auto elevation = loadFile("../assets/elevation.data", expectedFileSize);
-    auto overrides = loadFile("../assets/overrides.data", expectedFileSize);
+    auto elevation = loadFile(elevationFilepath, expectedFileSize);
+    auto overrides = loadFile(overridesFilepath, expectedFileSize);
 
     // for (int i = 1250; i < 1300; i++)
     // {
@@ -112,20 +138,20 @@ int main(int argc, char** argv)
     visualizer::writeBMP(
         of,
         &elevation[0],
-        IMAGE_DIM,
-        IMAGE_DIM,
+        imageDimension,
+        imageDimension,
         [&] (size_t x, size_t y, uint8_t elevation) {
         
             // Marks interesting positions on the map
-            if (donut(x, y, ROVER_X, ROVER_Y) ||
-                donut(x, y, BACHELOR_X, BACHELOR_Y) ||
-                donut(x, y, WEDDING_X, WEDDING_Y))
+            if (donut(x, y, roverLoc.first, roverLoc.second) ||
+                donut(x, y, bachelorLoc.first, bachelorLoc.second) ||
+                donut(x, y, weddingLoc.first, weddingLoc.second))
             {
                 return uint8_t(visualizer::IPV_PATH);
             }
             
             // Signifies water
-            if ((overrides[y * IMAGE_DIM + x] & (OF_WATER_BASIN | OF_RIVER_MARSH)) ||
+            if ((overrides[y * imageDimension + x] & (OF_WATER_BASIN | OF_RIVER_MARSH)) ||
                 elevation == 0)
             {
                 return uint8_t(visualizer::IPV_WATER);

@@ -7,8 +7,8 @@ set(CMAKE_DEBUG_DIR "${CMAKE_SOURCE_DIR}/bin/debug")
 find_package(Doxygen)
 option(BUILD_DOC "Build documentation" OFF)
 
-include_directories(${CMAKE_SOURCE_DIR}/visualizer/include)
-                    # ../lib/eigen
+include_directories(${CMAKE_SOURCE_DIR}/visualizer/include
+                    ${CMAKE_SOURCE_DIR}/3rd-library)
                     # ../lib/Sophus
                     # ../lib/easylogging
                     # ../include)
@@ -22,7 +22,7 @@ include_directories(${CMAKE_SOURCE_DIR}/visualizer/include)
 # include_directories(math.hpp)
 # add_library(source SHARED ${library_SOURCES})
 add_executable(bachelor main.cpp)
-target_link_libraries (bachelor visualizer stdc++fs)
+target_link_libraries (bachelor visualizer)
 
 set_target_properties(bachelor PROPERTIES CMAKE_CXX_STANDARD_REQUIRED ON)
 set_target_properties(bachelor PROPERTIES CXX_STANDARD 17)

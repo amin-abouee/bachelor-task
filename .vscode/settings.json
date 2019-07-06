@@ -1,2 +1,7 @@
 {
+    "files.associations": {
+        "string": "cpp",
+        "utility": "cpp",
+        "functional": "cpp"
+    }
 }

@@ -50,12 +50,13 @@ for x in res.keys():
     print("{}, {:08b}".format(x,x))
 
 # cmap_10 = plt.cm.get_cmap('Dark2', 7) 
-cmap_7 = matplotlib.colors.ListedColormap(["limegreen", "navy", "dodgerblue", "royalblue", "mediumblue", "orange", "firebrick"])
+# cmap_7 = matplotlib.colors.ListedColormap(["limegreen", "navy", "dodgerblue", "royalblue", "mediumblue", "orange", "firebrick"])
+cmap_7 = matplotlib.colors.ListedColormap(["greenyellow", "royalblue", "dodgerblue", "steelblue", "deepskyblue", "darkorange", "firebrick"])
 # cmap = matplotlib.colors.ListedColormap(["white", "black", "white", "white", "white", "white", "white"])
 norm = matplotlib.colors.BoundaryNorm(bounds, cmap_7.N, clip=True)
 
 plt.figure()
-plt.imshow(elevation_map, cmap="viridis")
+plt.imshow(elevation_map, cmap="jet")
 plt.colorbar()
 plt.savefig('../maps/elevation_map.png')
 plt.close()
@@ -75,6 +76,7 @@ plt.figure()
 plt.imshow(valid_maps, cmap=cmap_2)
 # plt.colorbar(ticks=bounds_val)
 plt.savefig('../maps/valid_map.png')
+plt.close()
 
 
 plt.show()
