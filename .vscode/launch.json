@@ -5,25 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "clang++ build and debug active file",
-            "type": "cppdbg",
+            "type": "lldb",
             "request": "launch",
-            "program": "${fileDirname}/${fileBasenameNoExtension}",
-            "args": [],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "lldb",
-            "setupCommands": [
-                {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                }
-            ],
-            "preLaunchTask": "clang++ build active file",
-            "miDebuggerPath": "/usr/bin/lldb-mi"
+            "name": "Debug",
+            "program": "${workspaceFolder}/bin/debug/bachelor-d",
+            "args": ["/Users/amin/Workspace/cplusplus/bachelor-task/config/config.json"],
+            "cwd": "${workspaceFolder}"
         }
     ]
 }

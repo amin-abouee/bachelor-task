@@ -9,6 +9,7 @@
 #include <nlohmann/json.hpp>
 
 #include "visualizer.h"
+#include "matrix.hpp"
 
 #ifdef _MSC_VER
 static const char* PATH_SEP = "\\";
@@ -44,7 +45,7 @@ std::ifstream::pos_type fileSize(const std::string& filename)
     {
         throw std::exception();
     }
-    return in.tellg(); 
+    return in.tellg();
 }
 
 std::vector<uint8_t> loadFile(const std::string& filename, const uint32_t expectedFileSize)
@@ -66,6 +67,26 @@ std::vector<uint8_t> loadFile(const std::string& filename, const uint32_t expect
     return data;
 }
 
+std::vector<std::vector<uint8_t> > loadFile2(const std::string& filename, const uint32_t imageDimension)
+{
+    const uint32_t expectedFileSize = imageDimension * imageDimension;
+    const std::size_t fsize = fileSize(filename);
+    if (fsize != expectedFileSize)
+    {
+        throw std::exception();
+    }
+    // std::vector<uint8_t> data(fsize, 0);
+    std::vector<std::vector<uint8_t> > data( imageDimension, std::vector<uint8_t>(imageDimension, 0) ) ;
+    std::ifstream ifile(filename, std::ifstream::binary);
+    if (!ifile.good())
+    {
+        throw std::exception();
+    }
+    ifile.read((char*)&(data[0][0]), fsize);
+    ifile.close();
+    return data;
+}
+
 bool donut(int x, int y, int x1, int y1)
 {
     int dx = x - x1;
@@ -73,6 +94,18 @@ bool donut(int x, int y, int x1, int y1)
     int r2 = dx * dx + dy * dy;
     return r2 >= 150 && r2 <= 400;
 }
+
+struct Point 
+{
+    double x, y;
+    Point( double x, double y) :  x( x) , y( y) { }
+};
+
+void dijkstra_search()
+{
+
+}
+
 
 int main(int argc, char** argv)
 {
@@ -98,6 +131,8 @@ int main(int argc, char** argv)
     std::cout << bachelorLoc.first << " " << bachelorLoc.second << std::endl;
     std::cout << weddingLoc.first << " " << weddingLoc.second << std::endl;
 
+    Matrix<uint8_t> a{imageDimension, imageDimension};
+
 
     const uint32_t expectedFileSize = imageDimension * imageDimension;
     // Address assets relative to application location
@@ -111,6 +146,20 @@ int main(int argc, char** argv)
     // std::cout << "anchor: " << anchor << std::endl;
     auto elevation = loadFile(elevationFilepath, expectedFileSize);
     auto overrides = loadFile(overridesFilepath, expectedFileSize);
+
+    // auto elevation2 = loadFile2(elevationFilepath, imageDimension);
+    // auto overrides2 = loadFile2(overridesFilepath, imageDimension);
+
+    // for (int i(0); i< 50; i++)
+    // {
+    //     for(int j(0); j<50; j++)
+    //     {
+    //         std::cout << (int)overrides2[i][j] << " ";
+    //     }
+    //     std::cout << std::endl;
+    // }
+
+
 
     // for (int i = 1250; i < 1300; i++)
     // {
@@ -134,14 +183,9 @@ int main(int argc, char** argv)
 
 
     std::ofstream of("pic.bmp", std::ofstream::binary);
-    
-    visualizer::writeBMP(
-        of,
-        &elevation[0],
-        imageDimension,
-        imageDimension,
-        [&] (size_t x, size_t y, uint8_t elevation) {
-        
+
+    auto pixelFilter = [&overrides, &imageDimension, &roverLoc, &bachelorLoc, &weddingLoc] (size_t x, size_t y, uint8_t elevation) 
+    {
             // Marks interesting positions on the map
             if (donut(x, y, roverLoc.first, roverLoc.second) ||
                 donut(x, y, bachelorLoc.first, bachelorLoc.second) ||
@@ -163,7 +207,14 @@ int main(int argc, char** argv)
                 elevation = visualizer::IPV_ELEVATION_BEGIN;
             }
             return elevation;
-    });
+    };
+    
+    visualizer::writeBMP(
+        of,
+        &elevation[0],
+        imageDimension,
+        imageDimension,
+        pixelFilter);
     of.flush();
 #if __APPLE__
     auto res = system("open pic.bmp");

@@ -8,20 +8,22 @@ find_package(Doxygen)
 option(BUILD_DOC "Build documentation" OFF)
 
 include_directories(${CMAKE_SOURCE_DIR}/visualizer/include
+                    ${CMAKE_SOURCE_DIR}/include
                     ${CMAKE_SOURCE_DIR}/3rd-library)
                     # ../lib/Sophus
                     # ../lib/easylogging
                     # ../include)
 
 
-# set(library_SOURCES
-#     math.cpp
-#     )
+set(LIBRARY_SOURCES
+    main.cpp
+    matrix.cpp
+    )
 
 
 # include_directories(math.hpp)
 # add_library(source SHARED ${library_SOURCES})
-add_executable(bachelor main.cpp)
+add_executable(bachelor ${LIBRARY_SOURCES})
 target_link_libraries (bachelor visualizer)
 
 set_target_properties(bachelor PROPERTIES CMAKE_CXX_STANDARD_REQUIRED ON)

@@ -2,6 +2,10 @@
     "files.associations": {
         "string": "cpp",
         "utility": "cpp",
-        "functional": "cpp"
-    }
+        "functional": "cpp",
+        "vector": "cpp",
+        "ios": "cpp"
+    },
+    "C_Cpp.errorSquiggles": "Enabled",
+    "C_Cpp.configurationWarnings": "Disabled"
 }
