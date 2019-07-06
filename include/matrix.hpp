@@ -32,52 +32,51 @@ class Matrix final
 {
 public:
     //C'tor
-    explicit Matrix(const uint32_t numRows, const uint32_t numCols) noexcept;
+    explicit Matrix(const uint32_t numRows, const uint32_t numCols);
     //D'tor
-    virtual ~Matrix() noexcept = default;
+    virtual ~Matrix() = default;
 
     //Copy C'tor
-    Matrix(const Matrix & rhs) noexcept = default;
+    Matrix(const Matrix & rhs) = default;
     //move C'tor
-    Matrix(Matrix && rhs) noexcept = default;
+    Matrix(Matrix && rhs) = default;
     //Copy assignment operator
-    Matrix &operator=(const Matrix & rhs) noexcept = default;
+    Matrix &operator=(const Matrix & rhs) = default;
     //move assignment operator
-    Matrix &operator=(Matrix && rhs) noexcept = default;
+    Matrix &operator=(Matrix && rhs) = default;
 
-    const uint8_t & operator()(const uint32_t row, const uint32_t column) const noexcept;
+    const T & operator()(const uint32_t row, const uint32_t column) const;
 
-    uint8_t & operator()(const uint32_t row, const uint32_t column) noexcept;
+    T & operator()(const uint32_t row, const uint32_t column);
 
-    // uint8_t operator()(const uint32_t row, const uint32_t column) const noexcept;
 
-    // const uint8_t & operator[](const uint32_t row, const uint32_t column) const noexcept;
+    // uint8_t operator()(const uint32_t row, const uint32_t column) const;
 
-    // uint8_t & operator[](const uint32_t row, const uint32_t column) noexcept;
+    // const uint8_t & operator[](const uint32_t row, const uint32_t column) const;
 
-    // uint8_t operator[](const uint32_t row, const uint32_t column) const noexcept;
+    // uint8_t & operator[](const uint32_t row, const uint32_t column);
 
-    // size_t getRows() const
-    // {
-    //     return rows;
-    // }
-    // size_t getColumns() const
-    // {
-    //     return columns;
-    // }
+    // uint8_t operator[](const uint32_t row, const uint32_t column) const;
 
-    const uint32_t getSizeRows() const noexcept;
+    const std::vector<T> & getMatrix() const;
 
-    const uint32_t getSizeCols() const noexcept;
+    std::vector<T> & getMatrix();
 
+    uint32_t getRows() const;
+
+    uint32_t getCols() const;
+
+    T* data();
+
+    uint32_t getTotalSize() const;
 
 
     friend std::ostream& operator>>( std::istream& os, Matrix& mat);
 
 private:
     std::uint32_t m_numRows, m_numCols;
-    std::vector<uint8_t> m_matrix;
+    std::vector<T> m_matrix;
 };
 
-#include "matrix.hpp"
+// #include "matrix.cpp"
 #endif /* __MATRIX_H__ */

@@ -1,9 +1,23 @@
 {
+    "env": {
+        "myIncludePath": [
+            "${workspaceFolder}/**",
+            "${workspaceFolder}/include"
+        ],
+        "clangIncludePath": [
+            "/Library/Developer/CommandLineTools/usr/include/c++/v1",
+            "/Library/Developer/CommandLineTools/usr/include/c++/v1/experimental",
+            "/Library/Developer/CommandLineTools/usr/include/c++/v1/ext",
+            "/Library/Developer/CommandLineTools/usr/lib/clang/10.0./include"
+        ]
+    },
     "configurations": [
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${myIncludePath}",
+                "${workspaceFolder}/include/matrix.hpp",
+                "${clangIncludePath}"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",

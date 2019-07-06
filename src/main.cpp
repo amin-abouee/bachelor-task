@@ -48,43 +48,40 @@ std::ifstream::pos_type fileSize(const std::string& filename)
     return in.tellg();
 }
 
-std::vector<uint8_t> loadFile(const std::string& filename, const uint32_t expectedFileSize)
-{
-    // std::cout << "filename: " << filename << std::endl;
-    // std::cout << "expected File Size: " << expectedFileSize << std::endl;
-    const std::size_t fsize = fileSize(filename);
-    if (fsize != expectedFileSize)
-    {
-        throw std::exception();
-    }
-    std::vector<uint8_t> data(fsize, 0);
-    std::ifstream ifile(filename, std::ifstream::binary);
-    if (!ifile.good())
-    {
-        throw std::exception();
-    }
-    ifile.read((char*)&data[0], fsize);
-    return data;
-}
+// std::vector<uint8_t> loadFile(const std::string& filename, const uint32_t expectedFileSize)
+// {
+//     // std::cout << "filename: " << filename << std::endl;
+//     // std::cout << "expected File Size: " << expectedFileSize << std::endl;
+//     const std::size_t fsize = fileSize(filename);
+//     if (fsize != expectedFileSize)
+//     {
+//         throw std::exception();
+//     }
+//     std::vector<uint8_t> data(fsize, 0);
+//     std::ifstream ifile(filename, std::ifstream::binary);
+//     if (!ifile.good())
+//     {
+//         throw std::exception();
+//     }
+//     ifile.read((char*)&data[0], fsize);
+//     return data;
+// }
 
-std::vector<std::vector<uint8_t> > loadFile2(const std::string& filename, const uint32_t imageDimension)
+void loadFiles(const std::string& filename, Matrix<uint8_t>& mat)
 {
-    const uint32_t expectedFileSize = imageDimension * imageDimension;
+    const uint32_t expectedFileSize = mat.getTotalSize();
     const std::size_t fsize = fileSize(filename);
     if (fsize != expectedFileSize)
     {
         throw std::exception();
     }
-    // std::vector<uint8_t> data(fsize, 0);
-    std::vector<std::vector<uint8_t> > data( imageDimension, std::vector<uint8_t>(imageDimension, 0) ) ;
     std::ifstream ifile(filename, std::ifstream::binary);
     if (!ifile.good())
     {
         throw std::exception();
     }
-    ifile.read((char*)&(data[0][0]), fsize);
+    ifile.read((char*)mat.data(), fsize);
     ifile.close();
-    return data;
 }
 
 bool donut(int x, int y, int x1, int y1)
@@ -131,7 +128,10 @@ int main(int argc, char** argv)
     std::cout << bachelorLoc.first << " " << bachelorLoc.second << std::endl;
     std::cout << weddingLoc.first << " " << weddingLoc.second << std::endl;
 
-    Matrix<uint8_t> a{imageDimension, imageDimension};
+    Matrix<uint8_t> elevationMat{imageDimension, imageDimension};
+    Matrix<uint8_t> overridesMat{imageDimension, imageDimension};
+    // uint8_t* ptr = a.data();
+    // std::cout << "ptr: " << (long)ptr << std::endl;
 
 
     const uint32_t expectedFileSize = imageDimension * imageDimension;
@@ -144,17 +144,28 @@ int main(int argc, char** argv)
     //     anchor = pname.substr(0, lastpos) + PATH_SEP;
     // }
     // std::cout << "anchor: " << anchor << std::endl;
-    auto elevation = loadFile(elevationFilepath, expectedFileSize);
-    auto overrides = loadFile(overridesFilepath, expectedFileSize);
+    // auto elevation = loadFile(elevationFilepath, expectedFileSize);
+    // auto overrides = loadFile(overridesFilepath, expectedFileSize);
 
-    // auto elevation2 = loadFile2(elevationFilepath, imageDimension);
+    loadFiles(elevationFilepath, elevationMat);
+    loadFiles(overridesFilepath, overridesMat);
+    // std::cout << a << std::endl;
     // auto overrides2 = loadFile2(overridesFilepath, imageDimension);
 
     // for (int i(0); i< 50; i++)
     // {
     //     for(int j(0); j<50; j++)
     //     {
-    //         std::cout << (int)overrides2[i][j] << " ";
+    //         std::cout << (int)elevationMat(i, j) << " ";
+    //     }
+    //     std::cout << std::endl;
+    // }
+
+    // for (int i(0); i< 50; i++)
+    // {
+    //     for(int j(0); j<50; j++)
+    //     {
+    //         std::cout << (int)overridesMat(i, j) << " ";
     //     }
     //     std::cout << std::endl;
     // }
@@ -172,7 +183,8 @@ int main(int argc, char** argv)
     // }
 
     std::unordered_set<uint8_t> set;
-    for (const int &i: overrides) {
+    for (const int &i: overridesMat.getMatrix()) 
+    {
         set.insert(i);
     }
 
@@ -184,7 +196,7 @@ int main(int argc, char** argv)
 
     std::ofstream of("pic.bmp", std::ofstream::binary);
 
-    auto pixelFilter = [&overrides, &imageDimension, &roverLoc, &bachelorLoc, &weddingLoc] (size_t x, size_t y, uint8_t elevation) 
+    auto pixelFilter = [&overridesMat, &imageDimension, &roverLoc, &bachelorLoc, &weddingLoc] (size_t x, size_t y, uint8_t elevation) 
     {
             // Marks interesting positions on the map
             if (donut(x, y, roverLoc.first, roverLoc.second) ||
@@ -195,7 +207,7 @@ int main(int argc, char** argv)
             }
             
             // Signifies water
-            if ((overrides[y * imageDimension + x] & (OF_WATER_BASIN | OF_RIVER_MARSH)) ||
+            if ((overridesMat(y, x) & (OF_WATER_BASIN | OF_RIVER_MARSH)) ||
                 elevation == 0)
             {
                 return uint8_t(visualizer::IPV_WATER);
@@ -211,7 +223,7 @@ int main(int argc, char** argv)
     
     visualizer::writeBMP(
         of,
-        &elevation[0],
+        elevationMat.data(),
         imageDimension,
         imageDimension,
         pixelFilter);
