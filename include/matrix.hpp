@@ -27,6 +27,22 @@
 #include <iostream>
 #include <vector>
 
+struct GridLocation 
+{
+    int32_t x, y;
+    GridLocation( int32_t x, int32_t y) :  x( x) , y( y) { };
+};
+
+struct GridWithWeights
+{
+    GridLocation* parent;
+    GridLocation loc;
+    double weight;
+    bool visited;
+    GridWithWeights () : loc(0,0), parent(nullptr), weight(100000.0), visited(false) {};
+    GridWithWeights (GridLocation _loc, GridLocation* _parent, double _weight) : loc(_loc), parent(_parent), weight(_weight) {};
+};
+
 template <typename  T>
 class Matrix final
 {

@@ -97,4 +97,4 @@ std::ostream& operator>>( std::ostream& out, Matrix<T>& mat)
 
 
 template class Matrix<uint8_t>;
-template class Matrix<uint32_t>;
+template class Matrix<GridWithWeights>;

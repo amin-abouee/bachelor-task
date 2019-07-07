@@ -5,6 +5,7 @@
 #include <exception>
 #include <unordered_set>
 #include <bitset>
+#include <queue>
 
 #include <nlohmann/json.hpp>
 
@@ -67,7 +68,7 @@ std::ifstream::pos_type fileSize(const std::string& filename)
 //     return data;
 // }
 
-void loadFiles(const std::string& filename, Matrix<uint8_t>& mat)
+void loadFile(const std::string& filename, Matrix<uint8_t>& mat)
 {
     const uint32_t expectedFileSize = mat.getTotalSize();
     const std::size_t fsize = fileSize(filename);
@@ -92,15 +93,146 @@ bool donut(int x, int y, int x1, int y1)
     return r2 >= 150 && r2 <= 400;
 }
 
-struct Point 
+void relax(GridWithWeights& current, GridWithWeights& next, double weight)
 {
-    double x, y;
-    Point( double x, double y) :  x( x) , y( y) { }
-};
+    if (next.weight > current.weight + weight)
+    {
+        next.weight = current.weight + weight;
+        next.parent = &(current.loc);
+    }
+}
 
-void dijkstra_search()
+bool in_bounds(const GridLocation& id, const uint32_t imageDimension)
 {
+    return 0 <= id.x && id.x < imageDimension
+        && 0 <= id.y && id.y < imageDimension;
+}
 
+bool passable(const GridLocation& id, const Matrix<uint8_t>& overrides)
+{
+    return overrides(id.y, id.x) == 0;
+}
+
+std::vector<GridLocation> neighbors(const GridWithWeights& s, const Matrix<uint8_t>& overrides, const uint32_t imageDimension) 
+{
+    std::array<GridLocation, 8> DIRS {{GridLocation{1, 0}, GridLocation{0, -1}, GridLocation{-1, 0}, GridLocation{0, 1}, 
+                                    GridLocation{1, 1}, GridLocation{1, -1}, GridLocation{-1, 1}, GridLocation{-1, -1}}};
+    std::vector<GridLocation> results;
+
+    const auto& current = s.loc;
+    for (GridLocation dir : DIRS) 
+    {
+        GridLocation next{current.x + dir.x, current.y + dir.y};
+        if (in_bounds(next, imageDimension) && passable(next, overrides)) 
+        {
+            results.push_back(next);
+        }
+    }
+
+    // if ((id.x + id.y) % 2 == 0) {
+    //   // aesthetic improvement on square grids
+    //   std::reverse(results.begin(), results.end());
+    // }
+
+    return results;
+}
+
+// template <typename T>
+void dijkstraSearch(const uint32_t imageDimension, const Matrix<uint8_t>& elevation, const Matrix<uint8_t>& overrides, const std::pair<uint32_t, uint32_t>& source, const std::pair<uint32_t, uint32_t>& target)
+{
+    Matrix<GridWithWeights> grid{imageDimension, imageDimension};
+
+    // struct myComparator 
+    // { 
+    //     bool operator() (const GridWithWeights* first, const GridWithWeights* second)
+    //     {
+    //         return first->weight > second->weight; 
+    //     };
+    // }; 
+
+    auto compare = [](const GridWithWeights first, const GridWithWeights second)
+                {
+                    return first.weight > second.weight; 
+                };
+
+
+    std::priority_queue<GridWithWeights, std::vector<GridWithWeights>, decltype(compare)> minQueue(compare);
+
+    for(std::size_t i(0); i< imageDimension; i++)
+    {
+        for(std::size_t j(0); j<imageDimension; j++)
+        {
+            auto& currentCell = grid(i,j);
+            currentCell.loc.x = j;
+            currentCell.loc.y = i;
+        }
+    }
+
+
+    auto& cellSource = grid(source.second, source.first);
+    cellSource.weight = 0;
+    cellSource.parent = std::addressof(cellSource.loc);
+    // cellSource.visited = true;
+
+
+    // std::cout << grid(source.second, source.first).weight << std::endl;
+
+
+    // for(std::size_t i(0); i< imageDimension; i++)
+    // {
+    //     for(std::size_t j(0); j<imageDimension; j++)
+    //     {
+    //         auto& currentCell = grid(i,j);
+    //         if (overrides(i,j) == 0)
+    //             minQueue.push(currentCell);
+    //     }
+    // }
+
+    minQueue.push(cellSource);
+    while (!minQueue.empty()) 
+    {
+        GridWithWeights current = minQueue.top();
+        // current.visited = true;
+        minQueue.pop();
+        auto& currentNode = grid(current.loc.y, current.loc.x);
+        if (currentNode.visited == true)
+            continue;
+
+        // std::cout << "X: " << current.loc.x << " Y: " << current.loc.y << std::endl;
+        if (current.loc.x == target.first && current.loc.y == target.second) 
+        {
+            std::cout << "Location: " << current.loc.x << " " << current.loc.y << std::endl;
+            std::cout << "Weight: " << current.weight << std::endl;
+            break;
+        }
+
+        std::vector<GridLocation> NG = neighbors(current, overrides, imageDimension);
+        for (const auto& next : NG) 
+        {
+            // double new_cost = cost_so_far[current] + graph.cost(current, next);
+            // if (cost_so_far.find(next) == cost_so_far.end()
+            //     || new_cost < cost_so_far[next]) 
+            // {
+            //     cost_so_far[next] = new_cost;
+            //     came_from[next] = current;
+            //     frontier.put(next, new_cost);
+            // }
+            auto& nextNode = grid(next.y, next.x);
+            if (nextNode.visited == false)
+            {
+                const double dx = next.x - current.loc.x;
+                const double dy = next.y - current.loc.y;
+                const double dz = elevation(next.y, next.x) - elevation(current.loc.y, current.loc.x);
+                double cost = std::sqrt(dx * dx + dy * dy + dz * dz);
+                if (dz < 0)
+                    cost = 1/cost;
+                relax(currentNode, nextNode, cost);
+                    // nextNode.visited = true;
+                minQueue.push(nextNode);
+            }
+        }
+        currentNode.visited = true;
+    }
 }
 
 
@@ -128,8 +260,8 @@ int main(int argc, char** argv)
     std::cout << bachelorLoc.first << " " << bachelorLoc.second << std::endl;
     std::cout << weddingLoc.first << " " << weddingLoc.second << std::endl;
 
-    Matrix<uint8_t> elevationMat{imageDimension, imageDimension};
-    Matrix<uint8_t> overridesMat{imageDimension, imageDimension};
+    Matrix<uint8_t> elevation{imageDimension, imageDimension};
+    Matrix<uint8_t> overrides{imageDimension, imageDimension};
     // uint8_t* ptr = a.data();
     // std::cout << "ptr: " << (long)ptr << std::endl;
 
@@ -147,8 +279,8 @@ int main(int argc, char** argv)
     // auto elevation = loadFile(elevationFilepath, expectedFileSize);
     // auto overrides = loadFile(overridesFilepath, expectedFileSize);
 
-    loadFiles(elevationFilepath, elevationMat);
-    loadFiles(overridesFilepath, overridesMat);
+    loadFile(elevationFilepath, elevation);
+    loadFile(overridesFilepath, overrides);
     // std::cout << a << std::endl;
     // auto overrides2 = loadFile2(overridesFilepath, imageDimension);
 
@@ -156,7 +288,7 @@ int main(int argc, char** argv)
     // {
     //     for(int j(0); j<50; j++)
     //     {
-    //         std::cout << (int)elevationMat(i, j) << " ";
+    //         std::cout << (int)elevation(i, j) << " ";
     //     }
     //     std::cout << std::endl;
     // }
@@ -165,7 +297,7 @@ int main(int argc, char** argv)
     // {
     //     for(int j(0); j<50; j++)
     //     {
-    //         std::cout << (int)overridesMat(i, j) << " ";
+    //         std::cout << (int)overrides(i, j) << " ";
     //     }
     //     std::cout << std::endl;
     // }
@@ -183,7 +315,7 @@ int main(int argc, char** argv)
     // }
 
     std::unordered_set<uint8_t> set;
-    for (const int &i: overridesMat.getMatrix()) 
+    for (const int &i: overrides.getMatrix()) 
     {
         set.insert(i);
     }
@@ -193,10 +325,18 @@ int main(int argc, char** argv)
         std::cout << i << " " << binary << std::endl;
     }
 
+///
+    {
+
+    dijkstraSearch(imageDimension, elevation, overrides, roverLoc, bachelorLoc);
+
+
+    }
+
 
     std::ofstream of("pic.bmp", std::ofstream::binary);
 
-    auto pixelFilter = [&overridesMat, &imageDimension, &roverLoc, &bachelorLoc, &weddingLoc] (size_t x, size_t y, uint8_t elevation) 
+    auto pixelFilter = [&overrides, &imageDimension, &roverLoc, &bachelorLoc, &weddingLoc] (size_t x, size_t y, uint8_t elevation) 
     {
             // Marks interesting positions on the map
             if (donut(x, y, roverLoc.first, roverLoc.second) ||
@@ -207,7 +347,7 @@ int main(int argc, char** argv)
             }
             
             // Signifies water
-            if ((overridesMat(y, x) & (OF_WATER_BASIN | OF_RIVER_MARSH)) ||
+            if ((overrides(y, x) & (OF_WATER_BASIN | OF_RIVER_MARSH)) ||
                 elevation == 0)
             {
                 return uint8_t(visualizer::IPV_WATER);
@@ -223,7 +363,7 @@ int main(int argc, char** argv)
     
     visualizer::writeBMP(
         of,
-        elevationMat.data(),
+        elevation.data(),
         imageDimension,
         imageDimension,
         pixelFilter);
