@@ -19,6 +19,8 @@ set(LIBRARY_SOURCES
     main.cpp
     matrix.cpp
     square-grid-graph.cpp
+    shortest-path.cpp
+    a-star.cpp
     )
 
 

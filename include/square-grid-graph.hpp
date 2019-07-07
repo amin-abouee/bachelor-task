@@ -50,6 +50,10 @@ public:
 
     T & operator()(const uint32_t row, const uint32_t column);
 
+    const T & operator()(const P& location) const;
+
+    T & operator()(const P& location);
+
     void initializeAllCells();
 
     void findNeighbours(const P& source, const Matrix<uint8_t>& overrides, std::vector<P>& neighbours);

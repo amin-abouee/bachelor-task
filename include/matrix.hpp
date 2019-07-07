@@ -32,6 +32,22 @@ struct GridLocation
 {
     int32_t x, y;
     GridLocation( int32_t x, int32_t y) :  x( x) , y( y) { };
+
+    // void setMovementInEightDirections(std::vector<GridLocation>& movements)
+    // {
+    //     movements.emplace_back(GridLocation{-1, 0});
+    //     movements.emplace_back(GridLocation{-1, -1});
+    //     movements.emplace_back(GridLocation{0, -1});
+    //     movements.emplace_back(GridLocation{1, -1});
+    //     movements.emplace_back(GridLocation{1, 0});
+    //     movements.emplace_back(GridLocation{1, 1});
+    //     movements.emplace_back(GridLocation{0, 1});
+    //     movements.emplace_back(GridLocation{-1, 1});
+    // }
+    bool operator==(const GridLocation& lhs)
+    {
+        return (lhs.x == x && lhs.y == y);
+    }
 };
 
 struct GridWithWeights

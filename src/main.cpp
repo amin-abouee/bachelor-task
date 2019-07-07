@@ -12,6 +12,8 @@
 #include "visualizer.h"
 #include "matrix.hpp"
 #include "square-grid-graph.hpp"
+#include "shortest-path.hpp"
+#include "a-star.hpp"
 
 #ifdef _MSC_VER
 static const char* PATH_SEP = "\\";
@@ -254,6 +256,77 @@ std::vector<GridLocation> dijkstraSearch(const uint32_t imageDimension, Matrix<G
 }
 
 
+std::vector<GridLocation> dijkstraSearch2(SquareGridGraph<GridWithWeights, GridLocation>& grid, const Matrix<uint8_t>& elevation, const Matrix<uint8_t>& overrides, const std::pair<uint32_t, uint32_t>& source, const std::pair<uint32_t, uint32_t>& target)
+{
+    auto compare = [](const GridWithWeights first, const GridWithWeights second)
+                {
+                    return first.weight > second.weight; 
+                };
+    std::priority_queue<GridWithWeights, std::vector<GridWithWeights>, decltype(compare)> frontier(compare);
+
+    grid.initializeAllCells();
+
+    auto& cellSource = grid(source.second, source.first);
+    cellSource.weight = 0;
+    cellSource.parent = std::addressof(cellSource.loc);
+    // cellSource.visited = true;
+
+    frontier.push(cellSource);
+    while (!frontier.empty()) 
+    {
+        GridWithWeights current = frontier.top();
+        frontier.pop();
+        auto& currentNode = grid(current.loc.y, current.loc.x);
+        if (currentNode.visited == true)
+            continue;
+
+        // std::cout << "X: " << current.loc.x << " Y: " << current.loc.y << std::endl;
+        if (current.loc.x == target.first && current.loc.y == target.second) 
+        {
+            std::cout << "Location: " << current.loc.x << " " << current.loc.y << std::endl;
+            std::cout << "Weight: " << current.weight << std::endl;
+            break;
+        }
+
+        std::vector<GridLocation> NG;
+        NG.reserve(8);
+        grid.findNeighbours(current.loc, overrides, NG);
+        for (const auto& next : NG) 
+        {
+            auto& nextNode = grid(next.y, next.x);
+            if (nextNode.visited == false)
+            {
+                const double dx = next.x - current.loc.x;
+                const double dy = next.y - current.loc.y;
+                const double dz = elevation(next.y, next.x) - elevation(current.loc.y, current.loc.x);
+                double cost = std::sqrt(dx * dx + dy * dy + dz * dz);
+                if (dz < 0)
+                    cost = 1/cost;
+                relax(currentNode, nextNode, cost);
+                    // nextNode.visited = true;
+                frontier.push(nextNode);
+            }
+        }
+        currentNode.visited = true;
+    }
+
+    std::vector <GridLocation> result;
+    auto& pp = grid(target.second, target.first );
+    // std::cout << "X: " << pp.loc.x << " Y: " << pp.loc.y << std::endl;
+
+    while(!(pp.loc.x == pp.parent->x && pp.loc.y == pp.parent->y))
+    {
+        // std::cout << "X: " << pp.loc.x << " Y: " << pp.loc.y  << "  " << (long) std::addressof(pp.loc) << "  " << (long)pp.parent << std::endl;
+        // pp.path = true;
+        result.emplace_back(GridLocation(pp.loc.x, pp.loc.y));
+        pp = grid(pp.parent->y, pp.parent->x );
+    }
+    // pp.path = true;
+    result.emplace_back(GridLocation(pp.loc.x, pp.loc.y));
+    return result;
+}
+
+
 int main(int argc, char** argv)
 {
 
@@ -271,6 +344,7 @@ int main(int argc, char** argv)
     const nlohmann::json& constraintsJsonNode = configFile[ "constraints" ];
     const uint32_t imageDimension = constraintsJsonNode["image_dimension"].get<uint32_t>();
     std::cout << "image dimension: " << imageDimension << std::endl;
+    // GridLocation roverLoc {0, 0};
     const auto roverLoc = constraintsJsonNode["rover_loc"].get<std::pair<uint32_t, uint32_t>>();
     const auto bachelorLoc = constraintsJsonNode["bachelor_loc"].get<std::pair<uint32_t, uint32_t>>();
     const auto weddingLoc = constraintsJsonNode["wedding_loc"].get<std::pair<uint32_t, uint32_t>>();
@@ -280,8 +354,6 @@ int main(int argc, char** argv)
 
     Matrix<uint8_t> elevation{imageDimension, imageDimension};
     Matrix<uint8_t> overrides{imageDimension, imageDimension};
-    // uint8_t* ptr = a.data();
-    // std::cout << "ptr: " << (long)ptr << std::endl;
 
 
     const uint32_t expectedFileSize = imageDimension * imageDimension;
@@ -302,60 +374,20 @@ int main(int argc, char** argv)
     // std::cout << a << std::endl;
     // auto overrides2 = loadFile2(overridesFilepath, imageDimension);
 
-    // for (int i(0); i< 50; i++)
-    // {
-    //     for(int j(0); j<50; j++)
-    //     {
-    //         std::cout << (int)elevation(i, j) << " ";
-    //     }
-    //     std::cout << std::endl;
-    // }
+    SquareGridGraph<GridWithWeights, GridLocation> graph(imageDimension, 8);
+    std::unique_ptr<ShortestPath<GridWithWeights, GridLocation>> shortestPath = std::make_unique<AStar<GridWithWeights, GridLocation>>();
+    GridLocation roverplace{static_cast<int32_t>(roverLoc.first), static_cast<int32_t>(roverLoc.second)};
+    GridLocation bachelorplace{static_cast<int32_t>(bachelorLoc.first), static_cast<int32_t>(bachelorLoc.second)};
+    shortestPath->findShortestPath(graph, elevation, overrides, roverplace, bachelorplace);
 
-    // for (int i(0); i< 50; i++)
-    // {
-    //     for(int j(0); j<50; j++)
-    //     {
-    //         std::cout << (int)overrides(i, j) << " ";
-    //     }
-    //     std::cout << std::endl;
-    // }
+    // std::cout << newGraph(0, 0).loc.x << " " << newGraph(0, 0).loc.y << " " << newGraph(0, 0).weight << std::endl;
 
+    // Matrix<GridWithWeights> grid {imageDimension, imageDimension};    
+    // auto result = dijkstraSearch(imageDimension, grid, elevation, overrides, roverLoc, bachelorLoc);
+    // auto result = dijkstraSearch2(graph, elevation, overrides, roverLoc, bachelorLoc);
 
-
-    // for (int i = 1250; i < 1300; i++)
-    // {
-    //     for (int j = 1550; j < 1600; j++)
-    //     {
-    //         int idx = i * IMAGE_DIM + j;
-    //         std::cout << (int)overrides[idx] << " ";
-    //     }
-    //     std::cout << std::endl;
-    // }
-
-    // std::unordered_set<uint8_t> set;
-    // for (const int &i: overrides.getMatrix()) 
-    // {
-    //     set.insert(i);
-    // }
-
-    // for (const int &i: set) {
-    //     std::string binary = std::bitset<8>(i).to_string();
-    //     std::cout << i << " " << binary << std::endl;
-    // }
-
-///
-    // {
-
-    SquareGridGraph<GridWithWeights, GridLocation> newGraph(imageDimension, 8);
-    newGraph.initializeAllCells();
-
-    std::cout << newGraph(0, 0).loc.x << " " << newGraph(0, 0).loc.y << " " << newGraph(0, 0).weight << std::endl;
-
-    Matrix<GridWithWeights> grid {imageDimension, imageDimension};    
-    auto result = dijkstraSearch(imageDimension, grid, elevation, overrides, roverLoc, bachelorLoc);
-
-    for(const auto& ll : result)
-        grid(ll.y, ll.x).path = true;
+    // for(const auto& ll : result)
+        // graph(ll.y, ll.x).path = true;
 
     // std::cout << (int)grid(roverLoc.second, roverLoc.first).path << std::endl;
     // std::cout << (int)grid(bachelorLoc.second, bachelorLoc.first).path << std::endl;
@@ -377,7 +409,7 @@ int main(int argc, char** argv)
 
     std::ofstream of("pic.bmp", std::ofstream::binary);
 
-    auto pixelFilter = [&grid, &overrides, &imageDimension, &roverLoc, &bachelorLoc, &weddingLoc] (size_t x, size_t y, uint8_t elevation) 
+    auto pixelFilter = [&graph, &overrides, &imageDimension, &roverLoc, &bachelorLoc, &weddingLoc] (size_t x, size_t y, uint8_t elevation) 
     {
         // Marks interesting positions on the map
         if (donut(x, y, roverLoc.first, roverLoc.second) ||
@@ -387,7 +419,7 @@ int main(int argc, char** argv)
             return uint8_t(visualizer::IPV_PATH);
         }
 
-        if (grid(y,x).path == true)
+        if (graph(y,x).path == true)
         {
             // std::cout << "X: " << x << " Y: " << y << std::endl;
             return uint8_t(visualizer::IPV_PATH);

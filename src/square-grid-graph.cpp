@@ -26,9 +26,6 @@ SquareGridGraph<T,P>::SquareGridGraph(const uint32_t gridSize, const uint8_t pos
         movements.emplace_back(P{1, 1});
         movements.emplace_back(P{0, 1});
         movements.emplace_back(P{-1, 1});
-
-        // , P{0, -1}, P{-1, 0}, P{0, 1}, 
-        //                             P{1, 1}, P{1, -1}, P{-1, 1}, P{-1, -1}}};
     }
 }
 
@@ -42,6 +39,18 @@ template <typename  T, typename P>
 T & SquareGridGraph<T,P>::operator()(const uint32_t row, const uint32_t col)
 {
     return m_graphData->operator()(row, col);
+}
+
+template <typename  T, typename P>
+const T & SquareGridGraph<T,P>::operator()(const P& location) const
+{
+    return m_graphData->operator()(location.y, location.x);
+}
+
+template <typename  T, typename P>
+T & SquareGridGraph<T,P>::operator()(const P& location)
+{
+    return m_graphData->operator()(location.y, location.x);
 }
 
 template <typename  T, typename P>

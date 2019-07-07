@@ -4,7 +4,8 @@
         "utility": "cpp",
         "functional": "cpp",
         "vector": "cpp",
-        "ios": "cpp"
+        "ios": "cpp",
+        "queue": "cpp"
     },
     "C_Cpp.errorSquiggles": "Enabled",
     "C_Cpp.configurationWarnings": "Disabled"
