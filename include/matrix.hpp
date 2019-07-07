@@ -26,6 +26,7 @@
 
 #include <iostream>
 #include <vector>
+#include <limits>
 
 struct GridLocation 
 {
@@ -39,8 +40,22 @@ struct GridWithWeights
     GridLocation loc;
     double weight;
     bool visited;
-    GridWithWeights () : loc(0,0), parent(nullptr), weight(100000.0), visited(false) {};
+    bool path;
+    GridWithWeights () : loc(0,0), parent(nullptr), weight(100000.0), visited(false), path{false} {};
     GridWithWeights (GridLocation _loc, GridLocation* _parent, double _weight) : loc(_loc), parent(_parent), weight(_weight) {};
+    void setLoc(int32_t x, int32_t y)
+    {
+        loc.x = x;
+        loc.y = y;
+    };
+
+    void initialize()
+    {
+        parent = nullptr;
+        weight = std::numeric_limits<double>::max();
+        visited = false;
+        path = false;
+    }
 };
 
 template <typename  T>

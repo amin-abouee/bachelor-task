@@ -11,6 +11,7 @@
 
 #include "visualizer.h"
 #include "matrix.hpp"
+#include "square-grid-graph.hpp"
 
 #ifdef _MSC_VER
 static const char* PATH_SEP = "\\";
@@ -93,6 +94,8 @@ bool donut(int x, int y, int x1, int y1)
     return r2 >= 150 && r2 <= 400;
 }
 
+// bool checkPath (int x, int y, )
+
 void relax(GridWithWeights& current, GridWithWeights& next, double weight)
 {
     if (next.weight > current.weight + weight)
@@ -138,9 +141,9 @@ std::vector<GridLocation> neighbors(const GridWithWeights& s, const Matrix<uint8
 }
 
 // template <typename T>
-void dijkstraSearch(const uint32_t imageDimension, const Matrix<uint8_t>& elevation, const Matrix<uint8_t>& overrides, const std::pair<uint32_t, uint32_t>& source, const std::pair<uint32_t, uint32_t>& target)
+std::vector<GridLocation> dijkstraSearch(const uint32_t imageDimension, Matrix<GridWithWeights>& grid, const Matrix<uint8_t>& elevation, const Matrix<uint8_t>& overrides, const std::pair<uint32_t, uint32_t>& source, const std::pair<uint32_t, uint32_t>& target)
 {
-    Matrix<GridWithWeights> grid{imageDimension, imageDimension};
+    // Matrix<GridWithWeights> grid{imageDimension, imageDimension};
 
     // struct myComparator 
     // { 
@@ -233,6 +236,21 @@ void dijkstraSearch(const uint32_t imageDimension, const Matrix<uint8_t>& elevat
         }
         currentNode.visited = true;
     }
+
+    std::vector <GridLocation> result;
+    auto& pp = grid(target.second, target.first );
+    // std::cout << "X: " << pp.loc.x << " Y: " << pp.loc.y << std::endl;
+
+    while(!(pp.loc.x == pp.parent->x && pp.loc.y == pp.parent->y))
+    {
+        // std::cout << "X: " << pp.loc.x << " Y: " << pp.loc.y  << "  " << (long) std::addressof(pp.loc) << "  " << (long)pp.parent << std::endl;
+        // pp.path = true;
+        result.emplace_back(GridLocation(pp.loc.x, pp.loc.y));
+        pp = grid(pp.parent->y, pp.parent->x );
+    }
+    // pp.path = true;
+    result.emplace_back(GridLocation(pp.loc.x, pp.loc.y));
+    return result;
 }
 
 
@@ -314,51 +332,80 @@ int main(int argc, char** argv)
     //     std::cout << std::endl;
     // }
 
-    std::unordered_set<uint8_t> set;
-    for (const int &i: overrides.getMatrix()) 
-    {
-        set.insert(i);
-    }
+    // std::unordered_set<uint8_t> set;
+    // for (const int &i: overrides.getMatrix()) 
+    // {
+    //     set.insert(i);
+    // }
 
-    for (const int &i: set) {
-        std::string binary = std::bitset<8>(i).to_string();
-        std::cout << i << " " << binary << std::endl;
-    }
+    // for (const int &i: set) {
+    //     std::string binary = std::bitset<8>(i).to_string();
+    //     std::cout << i << " " << binary << std::endl;
+    // }
 
 ///
-    {
+    // {
 
-    dijkstraSearch(imageDimension, elevation, overrides, roverLoc, bachelorLoc);
+    SquareGridGraph<GridWithWeights, GridLocation> newGraph(imageDimension, 8);
+    newGraph.initializeAllCells();
 
+    std::cout << newGraph(0, 0).loc.x << " " << newGraph(0, 0).loc.y << " " << newGraph(0, 0).weight << std::endl;
 
-    }
+    Matrix<GridWithWeights> grid {imageDimension, imageDimension};    
+    auto result = dijkstraSearch(imageDimension, grid, elevation, overrides, roverLoc, bachelorLoc);
+
+    for(const auto& ll : result)
+        grid(ll.y, ll.x).path = true;
+
+    // std::cout << (int)grid(roverLoc.second, roverLoc.first).path << std::endl;
+    // std::cout << (int)grid(bachelorLoc.second, bachelorLoc.first).path << std::endl;
+    // std::cout << "X: " << 
+    // }
+
+    // for (int i = 0; i < imageDimension; i++)
+    // {
+    //     for (int j = 0; j < imageDimension; j++)
+    //     {
+    //         if (grid(i, j).path == true)
+    //         {
+    //             std::cout << "X: " << j << " Y: " << i << std::endl; 
+    //         }
+    //     }
+    //     // std::cout << std::endl;
+    // }
 
 
     std::ofstream of("pic.bmp", std::ofstream::binary);
 
-    auto pixelFilter = [&overrides, &imageDimension, &roverLoc, &bachelorLoc, &weddingLoc] (size_t x, size_t y, uint8_t elevation) 
+    auto pixelFilter = [&grid, &overrides, &imageDimension, &roverLoc, &bachelorLoc, &weddingLoc] (size_t x, size_t y, uint8_t elevation) 
     {
-            // Marks interesting positions on the map
-            if (donut(x, y, roverLoc.first, roverLoc.second) ||
-                donut(x, y, bachelorLoc.first, bachelorLoc.second) ||
-                donut(x, y, weddingLoc.first, weddingLoc.second))
-            {
-                return uint8_t(visualizer::IPV_PATH);
-            }
-            
-            // Signifies water
-            if ((overrides(y, x) & (OF_WATER_BASIN | OF_RIVER_MARSH)) ||
-                elevation == 0)
-            {
-                return uint8_t(visualizer::IPV_WATER);
-            }
-            
-            // Signifies normal ground color
-            if (elevation < visualizer::IPV_ELEVATION_BEGIN)
-            {
-                elevation = visualizer::IPV_ELEVATION_BEGIN;
-            }
-            return elevation;
+        // Marks interesting positions on the map
+        if (donut(x, y, roverLoc.first, roverLoc.second) ||
+            donut(x, y, bachelorLoc.first, bachelorLoc.second) ||
+            donut(x, y, weddingLoc.first, weddingLoc.second))
+        {
+            return uint8_t(visualizer::IPV_PATH);
+        }
+
+        if (grid(y,x).path == true)
+        {
+            // std::cout << "X: " << x << " Y: " << y << std::endl;
+            return uint8_t(visualizer::IPV_PATH);
+        }
+        
+        // Signifies water
+        if ((overrides(y, x) & (OF_WATER_BASIN | OF_RIVER_MARSH)) ||
+            elevation == 0)
+        {
+            return uint8_t(visualizer::IPV_WATER);
+        }
+        
+        // Signifies normal ground color
+        if (elevation < visualizer::IPV_ELEVATION_BEGIN)
+        {
+            elevation = visualizer::IPV_ELEVATION_BEGIN;
+        }
+        return elevation;
     };
     
     visualizer::writeBMP(
