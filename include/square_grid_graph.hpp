@@ -26,7 +26,9 @@
 
 #include <iostream>
 #include <vector>
+#include <memory>
 #include "matrix.hpp"
+#include "cell_info.hpp"
 
 template <typename  T, typename P>
 class SquareGridGraph final
@@ -62,8 +64,8 @@ public:
 
 private:
     bool inBounds(const P& location);
-    uint32_t m_gridSize;
-    uint8_t m_possibleMovements;
+    int32_t m_gridSize;
+    int8_t m_possibleMovements;
     std::unique_ptr<Matrix<T>> m_graphData;
     std::vector<P> movements;
 };

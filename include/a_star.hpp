@@ -1,5 +1,5 @@
 /** 
- * @file shortest_path.hpp
+ * @file a-star.hpp
  * @author  Amin Abouee
  * @date 05.06.2019
  *
@@ -21,39 +21,41 @@
  *
  */
 
-#ifndef __SHORTEST_PATH_H__
-#define __SHORTEST_PATH_H__
+#ifndef __A_STAR_H__
+#define __A_STAR_H__
 
 #include <iostream>
 #include <vector>
-#include "square-grid-graph.hpp"
+#include "square_grid_graph.hpp"
+#include "shortest_path.hpp"
 
 template <typename  T, typename P>
-class ShortestPath
+class AStar final : public ShortestPath<T,P>
 {
 public:
     //C'tor
-    explicit ShortestPath();
+    explicit AStar();
     //D'tor
-    virtual ~ShortestPath() = default;
+    virtual ~AStar() = default;
 
     //Copy C'tor
-    ShortestPath(const ShortestPath & rhs) = default;
+    AStar(const AStar & rhs) = default;
     //move C'tor
-    ShortestPath(ShortestPath && rhs) = default;
+    AStar(AStar && rhs) = default;
     //Copy assignment operator
-    ShortestPath &operator=(const ShortestPath & rhs) = default;
+    AStar &operator=(const AStar & rhs) = default;
     //move assignment operator
-    ShortestPath &operator=(ShortestPath && rhs) = default;
+    AStar &operator=(AStar && rhs) = default;
 
-    virtual void findShortestPath(SquareGridGraph<T, P>& graph, 
+    void findShortestPath(SquareGridGraph<T, P>& graph, 
                             const Matrix<uint8_t>& elevation, 
                             const Matrix<uint8_t>& overrides, 
                             const P& source, 
-                            const P& target) = 0;
+                            const P& target) override;
 
-protected:
-    std::uint32_t m_cntExploredCells;
+private:
+    bool relax(T& current, T& next, double weight) const;
+    void updatePath (SquareGridGraph<T, P>& graph, const P& source, const P& target);
 };
 
-#endif /* __SHORTEST_PATH_H__ */
+#endif /* __A_STAR_H__ */

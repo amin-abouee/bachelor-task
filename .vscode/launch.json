@@ -9,7 +9,7 @@
             "request": "launch",
             "name": "Debug",
             "program": "${workspaceFolder}/bin/debug/bachelor-d",
-            "args": ["/Users/amin/Workspace/cplusplus/bachelor-task/config/config.json"],
+            "args": [../config/config.json],
             "cwd": "${workspaceFolder}"
         }
     ]

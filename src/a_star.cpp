@@ -1,5 +1,6 @@
-#include "a-star.hpp"
+#include "a_star.hpp"
 #include "matrix.hpp"
+#include "cell_info.hpp"
 
 #include <queue>
 #include <iostream>
@@ -52,7 +53,7 @@ void AStar<T,P>::findShortestPath(SquareGridGraph<T, P>& graph,
             break;
         }
 
-        std::vector<GridLocation> neighbours;
+        std::vector<P> neighbours;
         neighbours.reserve(8);
         graph.findNeighbours(currentCell.loc, overrides, neighbours);
         for (const auto& next : neighbours) 
@@ -104,4 +105,4 @@ void AStar<T,P>::updatePath(SquareGridGraph<T, P>& graph, const P& source, const
     }
 }
 
-template class AStar<GridWithWeights, GridLocation>;
+template class AStar<CellData, CellLocation>;

@@ -21,6 +21,7 @@
  *
  */
 
+
 #ifndef __MATRIX_H__
 #define __MATRIX_H__
 
@@ -28,51 +29,51 @@
 #include <vector>
 #include <limits>
 
-struct GridLocation 
-{
-    int32_t x, y;
-    GridLocation( int32_t x, int32_t y) :  x( x) , y( y) { };
+// struct GridLocation 
+// {
+//     int32_t x, y;
+//     GridLocation( int32_t x, int32_t y) :  x( x) , y( y) { };
 
-    // void setMovementInEightDirections(std::vector<GridLocation>& movements)
-    // {
-    //     movements.emplace_back(GridLocation{-1, 0});
-    //     movements.emplace_back(GridLocation{-1, -1});
-    //     movements.emplace_back(GridLocation{0, -1});
-    //     movements.emplace_back(GridLocation{1, -1});
-    //     movements.emplace_back(GridLocation{1, 0});
-    //     movements.emplace_back(GridLocation{1, 1});
-    //     movements.emplace_back(GridLocation{0, 1});
-    //     movements.emplace_back(GridLocation{-1, 1});
-    // }
-    bool operator==(const GridLocation& lhs)
-    {
-        return (lhs.x == x && lhs.y == y);
-    }
-};
+//     // void setMovementInEightDirections(std::vector<GridLocation>& movements)
+//     // {
+//     //     movements.emplace_back(GridLocation{-1, 0});
+//     //     movements.emplace_back(GridLocation{-1, -1});
+//     //     movements.emplace_back(GridLocation{0, -1});
+//     //     movements.emplace_back(GridLocation{1, -1});
+//     //     movements.emplace_back(GridLocation{1, 0});
+//     //     movements.emplace_back(GridLocation{1, 1});
+//     //     movements.emplace_back(GridLocation{0, 1});
+//     //     movements.emplace_back(GridLocation{-1, 1});
+//     // }
+//     bool operator==(const GridLocation& lhs)
+//     {
+//         return (lhs.x == x && lhs.y == y);
+//     }
+// };
 
-struct GridWithWeights
-{
-    GridLocation* parent;
-    GridLocation loc;
-    double weight;
-    bool visited;
-    bool path;
-    GridWithWeights () : loc(0,0), parent(nullptr), weight(100000.0), visited(false), path{false} {};
-    GridWithWeights (GridLocation _loc, GridLocation* _parent, double _weight) : loc(_loc), parent(_parent), weight(_weight) {};
-    void setLoc(int32_t x, int32_t y)
-    {
-        loc.x = x;
-        loc.y = y;
-    };
+// struct GridWithWeights
+// {
+//     GridLocation* parent;
+//     GridLocation loc;
+//     double weight;
+//     bool visited;
+//     bool path;
+//     GridWithWeights () : loc(0,0), parent(nullptr), weight(100000.0), visited(false), path{false} {};
+//     GridWithWeights (GridLocation _loc, GridLocation* _parent, double _weight) : loc(_loc), parent(_parent), weight(_weight) {};
+//     void setLoc(int32_t x, int32_t y)
+//     {
+//         loc.x = x;
+//         loc.y = y;
+//     };
 
-    void initialize()
-    {
-        parent = nullptr;
-        weight = std::numeric_limits<double>::max();
-        visited = false;
-        path = false;
-    }
-};
+//     void initialize()
+//     {
+//         parent = nullptr;
+//         weight = std::numeric_limits<double>::max();
+//         visited = false;
+//         path = false;
+//     }
+// };
 
 template <typename  T>
 class Matrix final

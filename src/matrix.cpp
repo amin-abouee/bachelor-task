@@ -1,4 +1,5 @@
 #include "matrix.hpp"
+#include "cell_info.hpp"
 
 template <typename T>
 Matrix<T>::Matrix(const uint32_t numRows, const uint32_t numCols): m_numRows(numRows), m_numCols(numCols), m_matrix(m_numRows*numCols)
@@ -97,4 +98,4 @@ std::ostream& operator>>( std::ostream& out, Matrix<T>& mat)
 
 
 template class Matrix<uint8_t>;
-template class Matrix<GridWithWeights>;
+template class Matrix<CellData>;

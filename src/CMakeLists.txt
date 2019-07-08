@@ -18,9 +18,10 @@ include_directories(${CMAKE_SOURCE_DIR}/visualizer/include
 set(LIBRARY_SOURCES
     main.cpp
     matrix.cpp
-    square-grid-graph.cpp
-    shortest-path.cpp
-    a-star.cpp
+    cell_info.cpp
+    square_grid_graph.cpp
+    shortest_path.cpp
+    a_star.cpp
     )
 
 

@@ -1,4 +1,4 @@
-#include "square-grid-graph.hpp"
+#include "square_grid_graph.hpp"
 #include <iostream>
 #include <numeric>
 
@@ -15,7 +15,14 @@ SquareGridGraph<T,P>::SquareGridGraph(const uint32_t gridSize, const uint8_t pos
     }
 
     // octile movement
-    // draw in code 
+    // Generating all the 8 successor of this cell 
+    // N.W   N   N.E 
+    //   
+    //     
+    // W----Cell----E 
+    //      
+    //    
+    // S.W    S   S.E 
     if (m_possibleMovements == 8)
     {
         movements.emplace_back(P{-1, 0});
@@ -94,4 +101,4 @@ bool SquareGridGraph<T,P>::inBounds(const P& location)
 // }
 
 
-template class SquareGridGraph<GridWithWeights, GridLocation>;
+template class SquareGridGraph<CellData, CellLocation>;

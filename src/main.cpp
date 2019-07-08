@@ -11,9 +11,10 @@
 
 #include "visualizer.h"
 #include "matrix.hpp"
-#include "square-grid-graph.hpp"
-#include "shortest-path.hpp"
-#include "a-star.hpp"
+#include "cell_info.hpp"
+#include "square_grid_graph.hpp"
+#include "shortest_path.hpp"
+#include "a_star.hpp"
 
 #ifdef _MSC_VER
 static const char* PATH_SEP = "\\";
@@ -98,242 +99,242 @@ bool donut(int x, int y, int x1, int y1)
 
 // bool checkPath (int x, int y, )
 
-void relax(GridWithWeights& current, GridWithWeights& next, double weight)
-{
-    if (next.weight > current.weight + weight)
-    {
-        next.weight = current.weight + weight;
-        next.parent = &(current.loc);
-    }
-}
+// void relax(GridWithWeights& current, GridWithWeights& next, double weight)
+// {
+//     if (next.weight > current.weight + weight)
+//     {
+//         next.weight = current.weight + weight;
+//         next.parent = &(current.loc);
+//     }
+// }
 
-bool in_bounds(const GridLocation& id, const uint32_t imageDimension)
-{
-    return 0 <= id.x && id.x < imageDimension
-        && 0 <= id.y && id.y < imageDimension;
-}
+// bool in_bounds(const GridLocation& id, const uint32_t imageDimension)
+// {
+//     return 0 <= id.x && id.x < imageDimension
+//         && 0 <= id.y && id.y < imageDimension;
+// }
 
-bool passable(const GridLocation& id, const Matrix<uint8_t>& overrides)
-{
-    return overrides(id.y, id.x) == 0;
-}
+// bool passable(const GridLocation& id, const Matrix<uint8_t>& overrides)
+// {
+//     return overrides(id.y, id.x) == 0;
+// }
 
-std::vector<GridLocation> neighbors(const GridWithWeights& s, const Matrix<uint8_t>& overrides, const uint32_t imageDimension) 
-{
-    std::array<GridLocation, 8> DIRS {{GridLocation{1, 0}, GridLocation{0, -1}, GridLocation{-1, 0}, GridLocation{0, 1}, 
-                                    GridLocation{1, 1}, GridLocation{1, -1}, GridLocation{-1, 1}, GridLocation{-1, -1}}};
-    std::vector<GridLocation> results;
+// std::vector<GridLocation> neighbors(const GridWithWeights& s, const Matrix<uint8_t>& overrides, const uint32_t imageDimension) 
+// {
+//     std::array<GridLocation, 8> DIRS {{GridLocation{1, 0}, GridLocation{0, -1}, GridLocation{-1, 0}, GridLocation{0, 1}, 
+//                                     GridLocation{1, 1}, GridLocation{1, -1}, GridLocation{-1, 1}, GridLocation{-1, -1}}};
+//     std::vector<GridLocation> results;
 
-    const auto& current = s.loc;
-    for (GridLocation dir : DIRS) 
-    {
-        GridLocation next{current.x + dir.x, current.y + dir.y};
-        if (in_bounds(next, imageDimension) && passable(next, overrides)) 
-        {
-            results.push_back(next);
-        }
-    }
+//     const auto& current = s.loc;
+//     for (GridLocation dir : DIRS) 
+//     {
+//         GridLocation next{current.x + dir.x, current.y + dir.y};
+//         if (in_bounds(next, imageDimension) && passable(next, overrides)) 
+//         {
+//             results.push_back(next);
+//         }
+//     }
 
-    // if ((id.x + id.y) % 2 == 0) {
-    //   // aesthetic improvement on square grids
-    //   std::reverse(results.begin(), results.end());
-    // }
+//     // if ((id.x + id.y) % 2 == 0) {
+//     //   // aesthetic improvement on square grids
+//     //   std::reverse(results.begin(), results.end());
+//     // }
 
-    return results;
-}
+//     return results;
+// }
 
-// template <typename T>
-std::vector<GridLocation> dijkstraSearch(const uint32_t imageDimension, Matrix<GridWithWeights>& grid, const Matrix<uint8_t>& elevation, const Matrix<uint8_t>& overrides, const std::pair<uint32_t, uint32_t>& source, const std::pair<uint32_t, uint32_t>& target)
-{
-    // Matrix<GridWithWeights> grid{imageDimension, imageDimension};
+// // template <typename T>
+// std::vector<GridLocation> dijkstraSearch(const uint32_t imageDimension, Matrix<GridWithWeights>& grid, const Matrix<uint8_t>& elevation, const Matrix<uint8_t>& overrides, const std::pair<uint32_t, uint32_t>& source, const std::pair<uint32_t, uint32_t>& target)
+// {
+//     // Matrix<GridWithWeights> grid{imageDimension, imageDimension};
 
-    // struct myComparator 
-    // { 
-    //     bool operator() (const GridWithWeights* first, const GridWithWeights* second)
-    //     {
-    //         return first->weight > second->weight; 
-    //     };
-    // }; 
+//     // struct myComparator 
+//     // { 
+//     //     bool operator() (const GridWithWeights* first, const GridWithWeights* second)
+//     //     {
+//     //         return first->weight > second->weight; 
+//     //     };
+//     // }; 
 
-    auto compare = [](const GridWithWeights first, const GridWithWeights second)
-                {
-                    return first.weight > second.weight; 
-                };
-
-
-    std::priority_queue<GridWithWeights, std::vector<GridWithWeights>, decltype(compare)> minQueue(compare);
-
-    for(std::size_t i(0); i< imageDimension; i++)
-    {
-        for(std::size_t j(0); j<imageDimension; j++)
-        {
-            auto& currentCell = grid(i,j);
-            currentCell.loc.x = j;
-            currentCell.loc.y = i;
-        }
-    }
+//     auto compare = [](const GridWithWeights first, const GridWithWeights second)
+//                 {
+//                     return first.weight > second.weight; 
+//                 };
 
 
-    auto& cellSource = grid(source.second, source.first);
-    cellSource.weight = 0;
-    cellSource.parent = std::addressof(cellSource.loc);
-    // cellSource.visited = true;
+//     std::priority_queue<GridWithWeights, std::vector<GridWithWeights>, decltype(compare)> minQueue(compare);
+
+//     for(std::size_t i(0); i< imageDimension; i++)
+//     {
+//         for(std::size_t j(0); j<imageDimension; j++)
+//         {
+//             auto& currentCell = grid(i,j);
+//             currentCell.loc.x = j;
+//             currentCell.loc.y = i;
+//         }
+//     }
 
 
-    // std::cout << grid(source.second, source.first).weight << std::endl;
+//     auto& cellSource = grid(source.second, source.first);
+//     cellSource.weight = 0;
+//     cellSource.parent = std::addressof(cellSource.loc);
+//     // cellSource.visited = true;
 
 
-    // for(std::size_t i(0); i< imageDimension; i++)
-    // {
-    //     for(std::size_t j(0); j<imageDimension; j++)
-    //     {
-    //         auto& currentCell = grid(i,j);
-    //         if (overrides(i,j) == 0)
-    //             minQueue.push(currentCell);
-    //     }
-    // }
-
-    minQueue.push(cellSource);
-    while (!minQueue.empty()) 
-    {
-        GridWithWeights current = minQueue.top();
-        // current.visited = true;
-        minQueue.pop();
-        auto& currentNode = grid(current.loc.y, current.loc.x);
-        if (currentNode.visited == true)
-            continue;
-
-        // std::cout << "X: " << current.loc.x << " Y: " << current.loc.y << std::endl;
-        if (current.loc.x == target.first && current.loc.y == target.second) 
-        {
-            std::cout << "Location: " << current.loc.x << " " << current.loc.y << std::endl;
-            std::cout << "Weight: " << current.weight << std::endl;
-            break;
-        }
-
-        std::vector<GridLocation> NG = neighbors(current, overrides, imageDimension);
-        for (const auto& next : NG) 
-        {
-            // double new_cost = cost_so_far[current] + graph.cost(current, next);
-            // if (cost_so_far.find(next) == cost_so_far.end()
-            //     || new_cost < cost_so_far[next]) 
-            // {
-            //     cost_so_far[next] = new_cost;
-            //     came_from[next] = current;
-            //     frontier.put(next, new_cost);
-            // }
-            auto& nextNode = grid(next.y, next.x);
-            if (nextNode.visited == false)
-            {
-                const double dx = next.x - current.loc.x;
-                const double dy = next.y - current.loc.y;
-                const double dz = elevation(next.y, next.x) - elevation(current.loc.y, current.loc.x);
-                double cost = std::sqrt(dx * dx + dy * dy + dz * dz);
-                if (dz < 0)
-                    cost = 1/cost;
-                relax(currentNode, nextNode, cost);
-                    // nextNode.visited = true;
-                minQueue.push(nextNode);
-            }
-        }
-        currentNode.visited = true;
-    }
-
-    std::vector <GridLocation> result;
-    auto& pp = grid(target.second, target.first );
-    // std::cout << "X: " << pp.loc.x << " Y: " << pp.loc.y << std::endl;
-
-    while(!(pp.loc.x == pp.parent->x && pp.loc.y == pp.parent->y))
-    {
-        // std::cout << "X: " << pp.loc.x << " Y: " << pp.loc.y  << "  " << (long) std::addressof(pp.loc) << "  " << (long)pp.parent << std::endl;
-        // pp.path = true;
-        result.emplace_back(GridLocation(pp.loc.x, pp.loc.y));
-        pp = grid(pp.parent->y, pp.parent->x );
-    }
-    // pp.path = true;
-    result.emplace_back(GridLocation(pp.loc.x, pp.loc.y));
-    return result;
-}
+//     // std::cout << grid(source.second, source.first).weight << std::endl;
 
 
-std::vector<GridLocation> dijkstraSearch2(SquareGridGraph<GridWithWeights, GridLocation>& grid, const Matrix<uint8_t>& elevation, const Matrix<uint8_t>& overrides, const std::pair<uint32_t, uint32_t>& source, const std::pair<uint32_t, uint32_t>& target)
-{
-    auto compare = [](const GridWithWeights first, const GridWithWeights second)
-                {
-                    return first.weight > second.weight; 
-                };
-    std::priority_queue<GridWithWeights, std::vector<GridWithWeights>, decltype(compare)> frontier(compare);
+//     // for(std::size_t i(0); i< imageDimension; i++)
+//     // {
+//     //     for(std::size_t j(0); j<imageDimension; j++)
+//     //     {
+//     //         auto& currentCell = grid(i,j);
+//     //         if (overrides(i,j) == 0)
+//     //             minQueue.push(currentCell);
+//     //     }
+//     // }
 
-    grid.initializeAllCells();
+//     minQueue.push(cellSource);
+//     while (!minQueue.empty()) 
+//     {
+//         GridWithWeights current = minQueue.top();
+//         // current.visited = true;
+//         minQueue.pop();
+//         auto& currentNode = grid(current.loc.y, current.loc.x);
+//         if (currentNode.visited == true)
+//             continue;
 
-    auto& cellSource = grid(source.second, source.first);
-    cellSource.weight = 0;
-    cellSource.parent = std::addressof(cellSource.loc);
-    // cellSource.visited = true;
+//         // std::cout << "X: " << current.loc.x << " Y: " << current.loc.y << std::endl;
+//         if (current.loc.x == target.first && current.loc.y == target.second) 
+//         {
+//             std::cout << "Location: " << current.loc.x << " " << current.loc.y << std::endl;
+//             std::cout << "Weight: " << current.weight << std::endl;
+//             break;
+//         }
 
-    frontier.push(cellSource);
-    while (!frontier.empty()) 
-    {
-        GridWithWeights current = frontier.top();
-        frontier.pop();
-        auto& currentNode = grid(current.loc.y, current.loc.x);
-        if (currentNode.visited == true)
-            continue;
+//         std::vector<GridLocation> NG = neighbors(current, overrides, imageDimension);
+//         for (const auto& next : NG) 
+//         {
+//             // double new_cost = cost_so_far[current] + graph.cost(current, next);
+//             // if (cost_so_far.find(next) == cost_so_far.end()
+//             //     || new_cost < cost_so_far[next]) 
+//             // {
+//             //     cost_so_far[next] = new_cost;
+//             //     came_from[next] = current;
+//             //     frontier.put(next, new_cost);
+//             // }
+//             auto& nextNode = grid(next.y, next.x);
+//             if (nextNode.visited == false)
+//             {
+//                 const double dx = next.x - current.loc.x;
+//                 const double dy = next.y - current.loc.y;
+//                 const double dz = elevation(next.y, next.x) - elevation(current.loc.y, current.loc.x);
+//                 double cost = std::sqrt(dx * dx + dy * dy + dz * dz);
+//                 if (dz < 0)
+//                     cost = 1/cost;
+//                 relax(currentNode, nextNode, cost);
+//                     // nextNode.visited = true;
+//                 minQueue.push(nextNode);
+//             }
+//         }
+//         currentNode.visited = true;
+//     }
 
-        // std::cout << "X: " << current.loc.x << " Y: " << current.loc.y << std::endl;
-        if (current.loc.x == target.first && current.loc.y == target.second) 
-        {
-            std::cout << "Location: " << current.loc.x << " " << current.loc.y << std::endl;
-            std::cout << "Weight: " << current.weight << std::endl;
-            break;
-        }
+//     std::vector <GridLocation> result;
+//     auto& pp = grid(target.second, target.first );
+//     // std::cout << "X: " << pp.loc.x << " Y: " << pp.loc.y << std::endl;
 
-        std::vector<GridLocation> NG;
-        NG.reserve(8);
-        grid.findNeighbours(current.loc, overrides, NG);
-        for (const auto& next : NG) 
-        {
-            auto& nextNode = grid(next.y, next.x);
-            if (nextNode.visited == false)
-            {
-                const double dx = next.x - current.loc.x;
-                const double dy = next.y - current.loc.y;
-                const double dz = elevation(next.y, next.x) - elevation(current.loc.y, current.loc.x);
-                double cost = std::sqrt(dx * dx + dy * dy + dz * dz);
-                if (dz < 0)
-                    cost = 1/cost;
-                relax(currentNode, nextNode, cost);
-                    // nextNode.visited = true;
-                frontier.push(nextNode);
-            }
-        }
-        currentNode.visited = true;
-    }
+//     while(!(pp.loc.x == pp.parent->x && pp.loc.y == pp.parent->y))
+//     {
+//         // std::cout << "X: " << pp.loc.x << " Y: " << pp.loc.y  << "  " << (long) std::addressof(pp.loc) << "  " << (long)pp.parent << std::endl;
+//         // pp.path = true;
+//         result.emplace_back(GridLocation(pp.loc.x, pp.loc.y));
+//         pp = grid(pp.parent->y, pp.parent->x );
+//     }
+//     // pp.path = true;
+//     result.emplace_back(GridLocation(pp.loc.x, pp.loc.y));
+//     return result;
+// }
 
-    std::vector <GridLocation> result;
-    auto& pp = grid(target.second, target.first );
-    // std::cout << "X: " << pp.loc.x << " Y: " << pp.loc.y << std::endl;
 
-    while(!(pp.loc.x == pp.parent->x && pp.loc.y == pp.parent->y))
-    {
-        // std::cout << "X: " << pp.loc.x << " Y: " << pp.loc.y  << "  " << (long) std::addressof(pp.loc) << "  " << (long)pp.parent << std::endl;
-        // pp.path = true;
-        result.emplace_back(GridLocation(pp.loc.x, pp.loc.y));
-        pp = grid(pp.parent->y, pp.parent->x );
-    }
-    // pp.path = true;
-    result.emplace_back(GridLocation(pp.loc.x, pp.loc.y));
-    return result;
-}
+// std::vector<GridLocation> dijkstraSearch2(SquareGridGraph<GridWithWeights, GridLocation>& grid, const Matrix<uint8_t>& elevation, const Matrix<uint8_t>& overrides, const std::pair<uint32_t, uint32_t>& source, const std::pair<uint32_t, uint32_t>& target)
+// {
+//     auto compare = [](const GridWithWeights first, const GridWithWeights second)
+//                 {
+//                     return first.weight > second.weight; 
+//                 };
+//     std::priority_queue<GridWithWeights, std::vector<GridWithWeights>, decltype(compare)> frontier(compare);
+
+//     grid.initializeAllCells();
+
+//     auto& cellSource = grid(source.second, source.first);
+//     cellSource.weight = 0;
+//     cellSource.parent = std::addressof(cellSource.loc);
+//     // cellSource.visited = true;
+
+//     frontier.push(cellSource);
+//     while (!frontier.empty()) 
+//     {
+//         GridWithWeights current = frontier.top();
+//         frontier.pop();
+//         auto& currentNode = grid(current.loc.y, current.loc.x);
+//         if (currentNode.visited == true)
+//             continue;
+
+//         // std::cout << "X: " << current.loc.x << " Y: " << current.loc.y << std::endl;
+//         if (current.loc.x == target.first && current.loc.y == target.second) 
+//         {
+//             std::cout << "Location: " << current.loc.x << " " << current.loc.y << std::endl;
+//             std::cout << "Weight: " << current.weight << std::endl;
+//             break;
+//         }
+
+//         std::vector<GridLocation> NG;
+//         NG.reserve(8);
+//         grid.findNeighbours(current.loc, overrides, NG);
+//         for (const auto& next : NG) 
+//         {
+//             auto& nextNode = grid(next.y, next.x);
+//             if (nextNode.visited == false)
+//             {
+//                 const double dx = next.x - current.loc.x;
+//                 const double dy = next.y - current.loc.y;
+//                 const double dz = elevation(next.y, next.x) - elevation(current.loc.y, current.loc.x);
+//                 double cost = std::sqrt(dx * dx + dy * dy + dz * dz);
+//                 if (dz < 0)
+//                     cost = 1/cost;
+//                 relax(currentNode, nextNode, cost);
+//                     // nextNode.visited = true;
+//                 frontier.push(nextNode);
+//             }
+//         }
+//         currentNode.visited = true;
+//     }
+
+//     std::vector <GridLocation> result;
+//     auto& pp = grid(target.second, target.first );
+//     // std::cout << "X: " << pp.loc.x << " Y: " << pp.loc.y << std::endl;
+
+//     while(!(pp.loc.x == pp.parent->x && pp.loc.y == pp.parent->y))
+//     {
+//         // std::cout << "X: " << pp.loc.x << " Y: " << pp.loc.y  << "  " << (long) std::addressof(pp.loc) << "  " << (long)pp.parent << std::endl;
+//         // pp.path = true;
+//         result.emplace_back(GridLocation(pp.loc.x, pp.loc.y));
+//         pp = grid(pp.parent->y, pp.parent->x );
+//     }
+//     // pp.path = true;
+//     result.emplace_back(GridLocation(pp.loc.x, pp.loc.y));
+//     return result;
+// }
 
 
 int main(int argc, char** argv)
 {
 
     std::ifstream fileReader( argv[1] );
-    const nlohmann::json configFile = nlohmann::json::parse( fileReader );
-    // nlohmann::json configFile;
-    // fileReader >> configFile;
+    // const nlohmann::json configFile = nlohmann::json::parse( fileReader );
+    nlohmann::json configFile;
+    fileReader >> configFile;
     const nlohmann::json& filePathsJsonNode = configFile[ "file_paths" ];
 
     const auto elevationFilepath = filePathsJsonNode[ "elevation_filepath" ].get< std::string >();
@@ -342,12 +343,12 @@ int main(int argc, char** argv)
     // std::cout << overridesFilepath << std::endl;
 
     const nlohmann::json& constraintsJsonNode = configFile[ "constraints" ];
-    const uint32_t imageDimension = constraintsJsonNode["image_dimension"].get<uint32_t>();
+    const uint32_t imageDimension = constraintsJsonNode["image_dimension"].get<int32_t>();
     std::cout << "image dimension: " << imageDimension << std::endl;
     // GridLocation roverLoc {0, 0};
-    const auto roverLoc = constraintsJsonNode["rover_loc"].get<std::pair<uint32_t, uint32_t>>();
-    const auto bachelorLoc = constraintsJsonNode["bachelor_loc"].get<std::pair<uint32_t, uint32_t>>();
-    const auto weddingLoc = constraintsJsonNode["wedding_loc"].get<std::pair<uint32_t, uint32_t>>();
+    const auto roverLoc = constraintsJsonNode["rover_loc"].get<std::pair<int32_t, int32_t>>();
+    const auto bachelorLoc = constraintsJsonNode["bachelor_loc"].get<std::pair<int32_t, int32_t>>();
+    const auto weddingLoc = constraintsJsonNode["wedding_loc"].get<std::pair<int32_t, int32_t>>();
     std::cout << roverLoc.first << " " << roverLoc.second << std::endl;
     std::cout << bachelorLoc.first << " " << bachelorLoc.second << std::endl;
     std::cout << weddingLoc.first << " " << weddingLoc.second << std::endl;
@@ -356,7 +357,7 @@ int main(int argc, char** argv)
     Matrix<uint8_t> overrides{imageDimension, imageDimension};
 
 
-    const uint32_t expectedFileSize = imageDimension * imageDimension;
+    // const uint32_t expectedFileSize = imageDimension * imageDimension;
     // Address assets relative to application location
     // std::string anchor = std::string(".") + PATH_SEP;
     // std::string pname = argv[0];
@@ -374,10 +375,10 @@ int main(int argc, char** argv)
     // std::cout << a << std::endl;
     // auto overrides2 = loadFile2(overridesFilepath, imageDimension);
 
-    SquareGridGraph<GridWithWeights, GridLocation> graph(imageDimension, 8);
-    std::unique_ptr<ShortestPath<GridWithWeights, GridLocation>> shortestPath = std::make_unique<AStar<GridWithWeights, GridLocation>>();
-    GridLocation roverplace{static_cast<int32_t>(roverLoc.first), static_cast<int32_t>(roverLoc.second)};
-    GridLocation bachelorplace{static_cast<int32_t>(bachelorLoc.first), static_cast<int32_t>(bachelorLoc.second)};
+    SquareGridGraph<CellData, CellLocation> graph(imageDimension, 8);
+    std::unique_ptr<ShortestPath<CellData, CellLocation>> shortestPath = std::make_unique<AStar<CellData, CellLocation>>();
+    CellLocation roverplace{static_cast<int32_t>(roverLoc.first), static_cast<int32_t>(roverLoc.second)};
+    CellLocation bachelorplace{static_cast<int32_t>(bachelorLoc.first), static_cast<int32_t>(bachelorLoc.second)};
     shortestPath->findShortestPath(graph, elevation, overrides, roverplace, bachelorplace);
 
     // std::cout << newGraph(0, 0).loc.x << " " << newGraph(0, 0).loc.y << " " << newGraph(0, 0).weight << std::endl;
@@ -408,6 +409,7 @@ int main(int argc, char** argv)
 
 
     std::ofstream of("pic.bmp", std::ofstream::binary);
+    // std::cout << "HERE: " << std::endl;
 
     auto pixelFilter = [&graph, &overrides, &imageDimension, &roverLoc, &bachelorLoc, &weddingLoc] (size_t x, size_t y, uint8_t elevation) 
     {
@@ -451,6 +453,7 @@ int main(int argc, char** argv)
     auto res = system("open pic.bmp");
     (void)res;
 #endif
+    std::cout << "FINISH: " << std::endl;
     return 0;
 }
 
