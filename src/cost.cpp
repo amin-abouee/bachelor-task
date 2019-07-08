@@ -3,7 +3,7 @@
 // #include "map"
 
 
-std::map< std::string, Cost::CostModel > Cost::allMethods
+std::map< std::string, Cost::CostModel > Cost::allModels
 {
   std::make_pair( "octile", Cost::CostModel::Octile ),
   std::make_pair( "pick", Cost::CostModel::Pick ),

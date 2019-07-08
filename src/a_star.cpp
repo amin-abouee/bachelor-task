@@ -13,6 +13,12 @@ AStar<T,P>::AStar() : ShortestPath<T,P>()
 }
 
 template <typename  T, typename P>
+AStar<T,P>::AStar(const std::string& downHillCostModel, const std::string& upHillCostModel): ShortestPath<T,P>(downHillCostModel, upHillCostModel)
+{
+
+}
+
+template <typename  T, typename P>
 void AStar<T,P>::findShortestPath(SquareGridGraph<T, P>& graph, 
                             const Matrix<uint8_t>& elevation, 
                             const Matrix<uint8_t>& overrides, 
@@ -77,11 +83,11 @@ void AStar<T,P>::findShortestPath(SquareGridGraph<T, P>& graph,
                 double cost = 0;
                 if (dz > 0)
                 {
-                    cost = ShortestPath<T,P>::m_upHillCostEstimator->computeCost(current, elevation(current.y, current.x), next, elevation(next.y , next.x), upHillModel);
+                    cost = ShortestPath<T,P>::m_upHillCostEstimator->computeCost(current, elevation(current.y, current.x), next, elevation(next.y , next.x),  ShortestPath<T,P>::m_upHillCostModel);
                 }
                 else if ( dz < 0)
                 {
-                    cost = ShortestPath<T,P>::m_downHillCostEstimator->computeCost(current, elevation(current.y, current.x), next, elevation(next.y , next.x), downHillModel);
+                    cost = ShortestPath<T,P>::m_downHillCostEstimator->computeCost(current, elevation(current.y, current.x), next, elevation(next.y , next.x), ShortestPath<T,P>::m_downHillCostModel);
                 }
                 else
                 {

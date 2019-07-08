@@ -35,6 +35,9 @@ class AStar final : public ShortestPath<T,P>
 public:
     //C'tor
     explicit AStar();
+    //C'tor
+    explicit AStar(const std::string& downHillCostModel, const std::string& upHillCostModel);
+
     //D'tor
     virtual ~AStar() = default;
 

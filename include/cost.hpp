@@ -47,7 +47,7 @@ public:
     //D'tor
     virtual ~Cost() = default;
 
-    static std::map< std::string, CostModel > allMethods;
+    static std::map< std::string, CostModel > allModels;
 
 double computeCost(const CellLocation& source, 
                             const uint8_t elevationSource, 

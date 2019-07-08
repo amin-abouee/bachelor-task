@@ -35,6 +35,8 @@ class ShortestPath
 public:
     //C'tor
     explicit ShortestPath();
+
+    explicit ShortestPath(const std::string& downHillCostModel, const std::string& upHillCostModel);
     //D'tor
     virtual ~ShortestPath() = default;
 
@@ -60,6 +62,8 @@ protected:
     std::uint32_t m_cntTotalDiagonalPath;
     std::unique_ptr<Cost> m_upHillCostEstimator;
     std::unique_ptr<Cost> m_downHillCostEstimator;
+    Cost::CostModel m_upHillCostModel;
+    Cost::CostModel m_downHillCostModel;
 };
 
 #endif /* __SHORTEST_PATH_H__ */

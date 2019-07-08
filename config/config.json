@@ -10,5 +10,10 @@
         "rover_loc" : [ 159, 1520 ],
         "bachelor_loc" : [ 1303, 85 ],
         "wedding_loc" : [ 1577, 1294 ]
+    },
+    "shortest_path_parameters":
+    {
+        "up_hill_cost_model" : "l2",
+        "down_hill_cost_model" : "l2"
     }
 }
