@@ -149,14 +149,14 @@ int main(int argc, char** argv)
     // auto overrides2 = loadFile2(overridesFilepath, imageDimension);
 
     const nlohmann::json& SPPJsonNode = configFile[ "shortest_path_parameters" ];
-    const auto upHillModel = SPPJsonNode["up_hill_cost_model"].get<std::string>();
-    const auto downHillModel = SPPJsonNode["down_hill_cost_model"].get<std::string>();
-    std::cout << "Up Hill Model Name: " << upHillModel << std::endl;
-    std::cout << "Down Hill Model Name: " << downHillModel << std::endl;
+    const auto upHillCostModel = SPPJsonNode["up_hill_cost_model"].get<std::string>();
+    const auto downHillCostModel = SPPJsonNode["down_hill_cost_model"].get<std::string>();
+    std::cout << "Up Hill Model Name: " << upHillCostModel << std::endl;
+    std::cout << "Down Hill Model Name: " << downHillCostModel << std::endl;
 
 
     SquareGridGraph<CellData, CellLocation> graph(imageDimension, 8);
-    std::unique_ptr<ShortestPath<CellData, CellLocation>> shortestPath = std::make_unique<AStar<CellData, CellLocation>>();
+    std::unique_ptr<ShortestPath<CellData, CellLocation>> shortestPath = std::make_unique<AStar<CellData, CellLocation>>(downHillCostModel, upHillCostModel);
     CellLocation roverplace{static_cast<int32_t>(roverLoc.first), static_cast<int32_t>(roverLoc.second)};
     CellLocation bachelorplace{static_cast<int32_t>(bachelorLoc.first), static_cast<int32_t>(bachelorLoc.second)};
     shortestPath->findShortestPath(graph, elevation, overrides, roverplace, bachelorplace);
