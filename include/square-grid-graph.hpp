@@ -61,7 +61,7 @@ public:
     // friend std::ostream& operator>>( std::istream& os, SquareGridGraph& graph);
 
 private:
-    bool inBounds(const uint32_t row, const uint32_t column);
+    bool inBounds(const P& location);
     uint32_t m_gridSize;
     uint8_t m_possibleMovements;
     std::unique_ptr<Matrix<T>> m_graphData;

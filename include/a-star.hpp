@@ -54,7 +54,7 @@ public:
                             const P& target) override;
 
 private:
-    void relax(T& current, T& next, double weight) const;
+    bool relax(T& current, T& next, double weight) const;
     void updatePath (SquareGridGraph<T, P>& graph, const P& source, const P& target);
 };
 

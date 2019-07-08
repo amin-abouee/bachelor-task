@@ -59,7 +59,7 @@ void SquareGridGraph<T,P>::findNeighbours(const P& source, const Matrix<uint8_t>
     for (auto& dir : movements) 
     {
         P next{source.x + dir.x, source.y + dir.y};
-        if (inBounds(next.y, next.x) && overrides(next.y, next.x) == 0) 
+        if (inBounds(next) && overrides(next.y, next.x) == 0 && this->operator()(next).visited == false) 
         {
             neighbours.push_back(next);
         }
@@ -80,10 +80,10 @@ void SquareGridGraph<T,P>::initializeAllCells()
 }
 
 template <typename  T, typename P>
-bool SquareGridGraph<T,P>::inBounds(const uint32_t row, const uint32_t col)
+bool SquareGridGraph<T,P>::inBounds(const P& location)
 {
-    return 0 <= col && col < m_gridSize
-        && 0 <= row && row < m_gridSize;
+    return 0 <= location.x && location.x < m_gridSize
+        && 0 <= location.y && location.y < m_gridSize;
 }
 
 // template <typename  T, typename P>

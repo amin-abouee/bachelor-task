@@ -18,56 +18,63 @@ void AStar<T,P>::findShortestPath(SquareGridGraph<T, P>& graph,
                             const P& source, 
                             const P& target)
 {
-    auto compare = [](const T first, const T second)
+    using PQNode = std::pair<P, double>;
+    auto compare = [](const PQNode& lhs, const PQNode& rhs)
                 {
-                    return first.weight > second.weight; 
+                    return lhs.second > rhs.second; 
                 };
-    std::priority_queue<T, std::vector<T>, decltype(compare)> frontier(compare);
+    // std::priority_queue<T, std::vector<T>, decltype(compare)> frontier(compare);
+
+    std::priority_queue<PQNode, std::vector<PQNode>, decltype(compare)> frontier(compare);
 
     graph.initializeAllCells();
     auto& sourceCell = graph(source.y, source.x);
     sourceCell.weight = 0;
     sourceCell.parent = std::addressof(sourceCell.loc);
 
-    frontier.push(sourceCell);
+    frontier.push(std::make_pair(sourceCell.loc, 0));
     while (!frontier.empty()) 
     {
-        T current = frontier.top();
+        P current = frontier.top().first;
         frontier.pop();
-        auto& currentCell = graph(current.loc);
+        auto& currentCell = graph(current);
         ShortestPath<T, P>::m_cntExploredCells++;
 
         if (currentCell.visited == true)
             continue;
 
         // std::cout << "X: " << current.loc.x << " Y: " << current.loc.y << std::endl;
-        if (current.loc == target) 
+        if (currentCell.loc == target) 
         {
-            std::cout << "Location: " << current.loc.x << " " << current.loc.y << std::endl;
-            std::cout << "Weight: " << current.weight << std::endl;
+            std::cout << "Location: " << currentCell.loc.x << " " << currentCell.loc.y << std::endl;
+            std::cout << "Weight: " << currentCell.weight << std::endl;
             std::cout << "Explored Cells: " << ShortestPath<T,P>::m_cntExploredCells << std::endl;
             break;
         }
 
         std::vector<GridLocation> neighbours;
         neighbours.reserve(8);
-        graph.findNeighbours(current.loc, overrides, neighbours);
+        graph.findNeighbours(currentCell.loc, overrides, neighbours);
         for (const auto& next : neighbours) 
         {
             auto& nextNode = graph(next);
-            if (nextNode.visited == false)
-            {
-                const double dx = next.x - current.loc.x;
-                const double dy = next.y - current.loc.y;
-                const double dz = elevation(next.y, next.x) - elevation(current.loc.y, current.loc.x);
+            // if (nextNode.visited == false)
+            // {
+                const double dx = next.x - current.x;
+                const double dy = next.y - current.y;
+                const double dz = elevation(next.y, next.x) - elevation(current.y, current.x);
                 double cost = std::sqrt(dx * dx + dy * dy + dz * dz);
                 if (dz < 0)
                     cost = 1/cost;
-                const double dxBig = target.x - current.loc.x;
-                const double dyBig = target.y - current.loc.y;
-                relax(currentCell, nextNode, cost);
-                frontier.push(nextNode);
-            }
+                const double dxBig = target.x - current.x;
+                const double dyBig = target.y - current.y;
+                // cost += std::sqrt(dxBig * dxBig + dyBig * dyBig);
+                const double priority = cost;
+                // const double priority = cost + std::abs(dxBig) + std::abs(dyBig);
+                // const double priority = cost + std::sqrt(dxBig * dxBig + dyBig * dyBig);
+                if (relax(currentCell, nextNode, cost))
+                    frontier.push(std::make_pair(nextNode.loc, nextNode.weight + priority));
+            // }
         }
         currentCell.visited = true;
     }
@@ -75,13 +82,15 @@ void AStar<T,P>::findShortestPath(SquareGridGraph<T, P>& graph,
 }
 
 template <typename  T, typename P>
-void AStar<T,P>::relax(T& current, T& next, double weight) const
+bool AStar<T,P>::relax(T& current, T& next, double weight) const
 {
     if (next.weight > current.weight + weight)
     {
         next.weight = current.weight + weight;
         next.parent = &(current.loc);
+        return true;
     }
+    return false;
 }
 
 template <typename  T, typename P>
