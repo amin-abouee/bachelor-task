@@ -22,6 +22,9 @@ set(LIBRARY_SOURCES
     square_grid_graph.cpp
     shortest_path.cpp
     a_star.cpp
+    cost.cpp
+    up_hill_cost.cpp
+    down_hill_cost.cpp
     )
 
 

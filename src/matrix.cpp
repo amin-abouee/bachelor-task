@@ -19,30 +19,6 @@ T & Matrix<T>::operator()(const uint32_t row, const uint32_t column)
     return m_matrix[row * m_numCols + column];
 }
 
-// template <typename T>
-// uint8_t Matrix<T>::operator()(const uint32_t row, const uint32_t column)  const
-// {
-//     return m_matrix[row * m_numCols + column];
-// }
-
-// template <typename T>
-// const uint8_t & Matrix<T>::operator[](const uint32_t row, const uint32_t column)  const
-// {
-//     return m_matrix[row * m_numCols + column];
-// }
-
-// template <typename T>
-// uint8_t & Matrix<T>::operator[](const uint32_t row, const uint32_t column) 
-// {
-//     return m_matrix[row * m_numCols + column];
-// }
-
-// template <typename T>
-// uint8_t Matrix<T>::operator[](const uint32_t row, const uint32_t column)  const
-// {
-//     return m_matrix[row * m_numCols + column];
-// }
-
 template <typename T>
 const std::vector<T> & Matrix<T>::getMatrix() const
 {

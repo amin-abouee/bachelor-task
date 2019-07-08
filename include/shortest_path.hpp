@@ -27,6 +27,7 @@
 #include <iostream>
 #include <vector>
 #include "square_grid_graph.hpp"
+#include "cost.hpp"
 
 template <typename  T, typename P>
 class ShortestPath
@@ -53,7 +54,12 @@ public:
                             const P& target) = 0;
 
 protected:
-    std::uint32_t m_cntExploredCells;
+    std::uint32_t m_cntExpandedCells;
+    std::uint32_t m_cntTotalPath;
+    std::uint32_t m_cntTotalStraightPath;
+    std::uint32_t m_cntTotalDiagonalPath;
+    std::unique_ptr<Cost> m_upHillCostEstimator;
+    std::unique_ptr<Cost> m_downHillCostEstimator;
 };
 
 #endif /* __SHORTEST_PATH_H__ */

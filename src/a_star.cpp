@@ -19,6 +19,8 @@ void AStar<T,P>::findShortestPath(SquareGridGraph<T, P>& graph,
                             const P& source, 
                             const P& target)
 {
+    Cost::CostModel downHillModel = Cost::CostModel::L2;
+    Cost::CostModel upHillModel = Cost::CostModel::L2;
     using PQNode = std::pair<P, double>;
     auto compare = [](const PQNode& lhs, const PQNode& rhs)
                 {
@@ -39,17 +41,21 @@ void AStar<T,P>::findShortestPath(SquareGridGraph<T, P>& graph,
         P current = frontier.top().first;
         frontier.pop();
         auto& currentCell = graph(current);
-        ShortestPath<T, P>::m_cntExploredCells++;
+        ShortestPath<T, P>::m_cntExpandedCells++;
 
         if (currentCell.visited == true)
+        {
             continue;
+            std::cout << "WARNING " << std::endl;
+        }
 
         // std::cout << "X: " << current.loc.x << " Y: " << current.loc.y << std::endl;
         if (currentCell.loc == target) 
         {
+            currentCell.visited = true;
             std::cout << "Location: " << currentCell.loc.x << " " << currentCell.loc.y << std::endl;
             std::cout << "Weight: " << currentCell.weight << std::endl;
-            std::cout << "Explored Cells: " << ShortestPath<T,P>::m_cntExploredCells << std::endl;
+            std::cout << "Expanded Cells: " << ShortestPath<T,P>::m_cntExpandedCells << std::endl;
             break;
         }
 
@@ -61,14 +67,30 @@ void AStar<T,P>::findShortestPath(SquareGridGraph<T, P>& graph,
             auto& nextNode = graph(next);
             // if (nextNode.visited == false)
             // {
-                const double dx = next.x - current.x;
-                const double dy = next.y - current.y;
-                const double dz = elevation(next.y, next.x) - elevation(current.y, current.x);
-                double cost = std::sqrt(dx * dx + dy * dy + dz * dz);
-                if (dz < 0)
-                    cost = 1/cost;
-                const double dxBig = target.x - current.x;
-                const double dyBig = target.y - current.y;
+                // const double dx = next.x - current.x;
+                // const double dy = next.y - current.y;
+
+                const double dz = elevation(next.y , next.x) - elevation(current.y, current.x);
+                // double cost = std::sqrt(dx * dx + dy * dy + dz * dz);
+                // if (dz < 0)
+                //     cost = 1/cost;
+                double cost = 0;
+                if (dz > 0)
+                {
+                    cost = ShortestPath<T,P>::m_upHillCostEstimator->computeCost(current, elevation(current.y, current.x), next, elevation(next.y , next.x), upHillModel);
+                }
+                else if ( dz < 0)
+                {
+                    cost = ShortestPath<T,P>::m_downHillCostEstimator->computeCost(current, elevation(current.y, current.x), next, elevation(next.y , next.x), downHillModel);
+                }
+                else
+                {
+                    cost = ShortestPath<T,P>::m_upHillCostEstimator->computeCost(current, elevation(current.y, current.x), next, elevation(next.y , next.x), Cost::CostModel::Octile);/* code */
+                }
+                
+
+                // const double dxBig = target.x - current.x;
+                // const double dyBig = target.y - current.y;
                 // cost += std::sqrt(dxBig * dxBig + dyBig * dyBig);
                 const double priority = cost;
                 // const double priority = cost + std::abs(dxBig) + std::abs(dyBig);
@@ -98,11 +120,23 @@ template <typename  T, typename P>
 void AStar<T,P>::updatePath(SquareGridGraph<T, P>& graph, const P& source, const P& target)
 {
     T& current = graph(target);
-    while(!(current.loc == *current.parent))
+    P prevoiusLocation {current.loc};
+    while(!(current.loc == source))
     {
         graph(current.loc).path = true;
+        ShortestPath<T, P>::m_cntTotalPath++;
         current = graph(*current.parent);
+        int distance = std::abs(current.loc.x - prevoiusLocation.x) + std::abs(current.loc.y - prevoiusLocation.y);
+        if (distance == 1)
+            ShortestPath<T, P>::m_cntTotalStraightPath++;
+        else
+            ShortestPath<T, P>::m_cntTotalDiagonalPath++;
+        prevoiusLocation = current.loc;
     }
+    std::cout << "Total Path: " << ShortestPath<T,P>::m_cntTotalPath << std::endl;
+    std::cout << "Straight Cells: " << ShortestPath<T,P>::m_cntTotalStraightPath << std::endl;
+    std::cout << "Diagonal Cells: " << ShortestPath<T,P>::m_cntTotalDiagonalPath << std::endl;
+
 }
 
 template class AStar<CellData, CellLocation>;
