@@ -51,13 +51,13 @@ T & SquareGridGraph<T,P>::operator()(const uint32_t row, const uint32_t col)
 template <typename  T, typename P>
 const T & SquareGridGraph<T,P>::operator()(const P& location) const
 {
-    return m_graphData->operator()(location.y, location.x);
+    return m_graphData->operator()(location.Y(), location.X());
 }
 
 template <typename  T, typename P>
 T & SquareGridGraph<T,P>::operator()(const P& location)
 {
-    return m_graphData->operator()(location.y, location.x);
+    return m_graphData->operator()(location.Y(), location.X());
 }
 
 template <typename  T, typename P>
@@ -65,8 +65,8 @@ void SquareGridGraph<T,P>::findNeighbours(const P& source, const Matrix<uint8_t>
 {
     for (auto& dir : movements) 
     {
-        P next{source.x + dir.x, source.y + dir.y};
-        if (inBounds(next) && overrides(next.y, next.x) == 0 && this->operator()(next).visited == false) 
+        P next{source.X() + dir.X(), source.Y() + dir.Y()};
+        if (inBounds(next) && overrides(next.Y(), next.X()) == 0 && this->operator()(next).getVisited() == false) 
         {
             neighbours.push_back(next);
         }
@@ -89,8 +89,8 @@ void SquareGridGraph<T,P>::initializeAllCells()
 template <typename  T, typename P>
 bool SquareGridGraph<T,P>::inBounds(const P& location)
 {
-    return 0 <= location.x && location.x < m_gridSize
-        && 0 <= location.y && location.y < m_gridSize;
+    return 0 <= location.X() && location.X() < m_gridSize
+        && 0 <= location.Y() && location.Y() < m_gridSize;
 }
 
 // template <typename  T, typename P>

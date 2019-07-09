@@ -1,8 +1,8 @@
 {
     "file_paths":
     {
-        "elevation_filepath" : "../assets/elevation.data",
-        "overrides_filepath" : "../assets/overrides.data"
+        "elevation_filepath" : "/Users/amin/Workspace/cplusplus/bachelor-task/assets/elevation.data",
+        "overrides_filepath" : "/Users/amin/Workspace/cplusplus/bachelor-task/assets/overrides.data"
     },
     "constraints":
     {
@@ -13,7 +13,7 @@
     },
     "shortest_path_parameters":
     {
-        "up_hill_cost_model" : "l1",
+        "up_hill_cost_model" : "l2",
         "down_hill_cost_model" : "l2"
     }
 }

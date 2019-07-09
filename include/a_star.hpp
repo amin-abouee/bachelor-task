@@ -17,8 +17,10 @@
  * https://www.gnu.org/copyleft/gpl.html
  *
  * @section DESCRIPTION
- * reference: Design Patterns for the Implementation of Graph Algorithms (http://www.dietmar-kuehl.de/generic-graph-algorithms.pdf)
- *
+ * A* implementation for different heuristic and cost function model
+ * reference: http://aigamedev.com/open/tutorials/theta-star-any-angle-paths/
+ * reference: https://www.redblobgames.com/pathfinding/
+ * reference: http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
  */
 
 #ifndef __A_STAR_H__
@@ -29,27 +31,46 @@
 #include "square_grid_graph.hpp"
 #include "shortest_path.hpp"
 
+/**
+ * @brief A* shortest path class
+ * 
+ * @tparam T data contain value
+ * @tparam P type of movements
+ */
 template <typename  T, typename P>
 class AStar final : public ShortestPath<T,P>
 {
 public:
-    //C'tor
+    /// C'tor
     explicit AStar();
-    //C'tor
+    
+    /// C'tor
     explicit AStar(const std::string& downHillCostModel, const std::string& upHillCostModel);
 
-    //D'tor
+    /// D'tor
     virtual ~AStar() = default;
 
-    //Copy C'tor
+    /// Copy C'tor
     AStar(const AStar & rhs) = default;
-    //move C'tor
+
+    /// Move C'tor
     AStar(AStar && rhs) = default;
-    //Copy assignment operator
+
+    /// Copy assignment operator
     AStar &operator=(const AStar & rhs) = default;
-    //move assignment operator
+
+    /// Move assignment operator
     AStar &operator=(AStar && rhs) = default;
 
+    /**
+     * @brief override function of shortest path class that computes the shortest path inside a grid graph from source cell to target cell
+     * 
+     * @param graph input graph
+     * @param elevation altitude of grid graph
+     * @param overrides the eligible and ineligible cells in grid
+     * @param source start position in graph
+     * @param target target position in graph
+     */
     void findShortestPath(SquareGridGraph<T, P>& graph, 
                             const Matrix<uint8_t>& elevation, 
                             const Matrix<uint8_t>& overrides, 
@@ -57,7 +78,25 @@ public:
                             const P& target) override;
 
 private:
-    bool relax(T& current, T& next, double weight) const;
+    /**
+     * @brief update weight and parent a cell if the new computed weight is less than current one
+     * reference: Introduction to algorithms, CLRS, chapter 24, page 649
+     * 
+     * @param current value and location of current cell
+     * @param next value and location of next cell
+     * @param cost computed cost from current to next
+     * @return true edge relaxed
+     * @return false no relaxation 
+     */
+    bool relax(T& current, T& next, double cost) const;
+
+    /**
+     * @brief find path from source cell to target cell
+     * 
+     * @param graph square grid graph
+     * @param source input cell content
+     * @param target target cell content
+     */
     void updatePath (SquareGridGraph<T, P>& graph, const P& source, const P& target);
 };
 

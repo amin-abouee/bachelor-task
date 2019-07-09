@@ -24,13 +24,13 @@ double Cost::computeCost(const CellLocation& source,
     switch ( model )
     {
         case CostModel::Octile:
-            return computeOCtile( source, elevationSource, target, elevationTarget );
+            return computeOctile( source, elevationSource, target, elevationTarget );
             // break;
         case CostModel::Pick:
-            return computePick( source, elevationSource, target, elevationTarget );
+            return computePeak( source, elevationSource, target, elevationTarget );
 
         case CostModel::MeanPick:
-            return computeMeanPick( source, elevationSource, target, elevationTarget );
+            return computeMeanPeak( source, elevationSource, target, elevationTarget );
             // break;
         case CostModel::L2:
             return computeL2( source, elevationSource, target, elevationTarget );
@@ -50,19 +50,20 @@ double Cost::computeCost(const CellLocation& source,
     }
 }
 
-double Cost::computeOCtile( const CellLocation& source, 
+double Cost::computeOctile( const CellLocation& source, 
                             const uint8_t elevationSource, 
                             const CellLocation& target, 
                             const uint8_t elevationTarget )
 {
-    double distance = std::abs(source.x - target.x) + std::abs(source.y - target.y);
+    ///  manhattan distance between source and target
+    double distance = std::abs(source.X() - target.X()) + std::abs(source.Y() - target.Y());
     if (distance == 1.0)
         return 1.0;
     else
         return std::sqrt(2.0);
 }
 
-double Cost::computePick( const CellLocation& source, 
+double Cost::computePeak( const CellLocation& source, 
                             const uint8_t elevationSource, 
                             const CellLocation& target, 
                             const uint8_t elevationTarget )
@@ -70,10 +71,10 @@ double Cost::computePick( const CellLocation& source,
     return std::max(elevationSource, elevationTarget);
 }
 
-double Cost::computeMeanPick( const CellLocation& source, 
+double Cost::computeMeanPeak( const CellLocation& source, 
                             const uint8_t elevationSource, 
                             const CellLocation& target, 
                             const uint8_t elevationTarget )
 {
-    return std::min(elevationSource, elevationTarget) + (std::abs(elevationTarget - elevationSource) / 2.0);
+    return (elevationSource + elevationTarget) / 2.0;
 }

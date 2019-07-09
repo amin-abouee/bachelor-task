@@ -50,6 +50,12 @@ T* Matrix<T>::data()
 }
 
 template <typename T>
+const T* Matrix<T>::data() const
+{
+    return m_matrix.data();
+}
+
+template <typename T>
 uint32_t Matrix<T>::getTotalSize() const
 {
     return m_numCols * m_numRows;
@@ -61,7 +67,6 @@ std::ostream& operator>>( std::ostream& out, Matrix<T>& mat)
 {
     const uint32_t sizeCols = mat.getSizeCols();
     const uint32_t sizeRows = mat.getSizeRows();
-
 
     for (int c = 0; c < sizeCols; c++){
         for (int r = 0; r < sizeRows; r++){

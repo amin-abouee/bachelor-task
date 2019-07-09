@@ -17,8 +17,8 @@
  * https://www.gnu.org/copyleft/gpl.html
  *
  * @section DESCRIPTION
- *
- *
+ * This class is a matrix representation for 1D data.
+ * This wrapper class represents 1D vector with size n*n as a 2D matrix with size n by n
  */
 
 
@@ -29,56 +29,110 @@
 #include <vector>
 #include <limits>
 
+/**
+ * @brief class Matrix
+ * 
+ * @tparam T template type name
+ */
 template <typename  T>
 class Matrix final
 {
 public:
-    //C'tor
+    /// C'tor
     explicit Matrix(const uint32_t numRows, const uint32_t numCols);
-    //D'tor
+
+    /// D'tor
     virtual ~Matrix() = default;
 
-    //Copy C'tor
+    /// Copy C'tor
     Matrix(const Matrix & rhs) = default;
-    //move C'tor
+
+    /// Move C'tor
     Matrix(Matrix && rhs) = default;
-    //Copy assignment operator
+    
+    /// Copy assignment operator
     Matrix &operator=(const Matrix & rhs) = default;
-    //move assignment operator
+
+    /// Move assignment operator
     Matrix &operator=(Matrix && rhs) = default;
 
+    /**
+     * @brief overload operator() 
+     * 
+     * @param row y axis
+     * @param column x axis
+     * @return const T&
+     */
     const T & operator()(const uint32_t row, const uint32_t column) const;
 
+    /**
+     * @brief overload operator ()
+     * 
+     * @param row y axis
+     * @param column x axis
+     * @return T& return
+     */
     T & operator()(const uint32_t row, const uint32_t column);
 
-
-    // uint8_t operator()(const uint32_t row, const uint32_t column) const;
-
-    // const uint8_t & operator[](const uint32_t row, const uint32_t column) const;
-
-    // uint8_t & operator[](const uint32_t row, const uint32_t column);
-
-    // uint8_t operator[](const uint32_t row, const uint32_t column) const;
-
+    /**
+     * @brief Get the Matrix object
+     * 
+     * @return const std::vector<T>& 
+     */
     const std::vector<T> & getMatrix() const;
 
+    /**
+     * @brief Get the Matrix object
+     * 
+     * @return std::vector<T>& 
+     */
     std::vector<T> & getMatrix();
 
+    /**
+     * @brief Get the number of rows
+     * 
+     * @return uint32_t 
+     */
     uint32_t getRows() const;
 
+    /**
+     * @brief Get the number of columns
+     * 
+     * @return uint32_t 
+     */
     uint32_t getCols() const;
 
+    /**
+     * @brief A raw pointer to m_matrix variable
+     * 
+     * @return T* 
+     */
     T* data();
 
+    /**
+     * @brief A const raw pointer to m_matrix variable
+     * 
+     * @return const T* 
+     */
+    const T* data() const;
+
+    /**
+     * @brief Get the number of cells (rows * cols)
+     * 
+     * @return uint32_t 
+     */
     uint32_t getTotalSize() const;
 
 
     friend std::ostream& operator>>( std::istream& os, Matrix& mat);
 
 private:
-    std::uint32_t m_numRows, m_numCols;
+    /// number of rows
+    std::uint32_t m_numRows;
+    /// number of cols
+    std::uint32_t m_numCols;
+    /// data vecto
     std::vector<T> m_matrix;
 };
 
-// #include "matrix.cpp"
 #endif /* __MATRIX_H__ */

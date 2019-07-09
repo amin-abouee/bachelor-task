@@ -11,9 +11,10 @@ double DownHillCost::computeL2( const CellLocation& source,
                             const CellLocation& target, 
                             const uint8_t elevationTarget )
 {
+    /// kinetic friction for down hill movement. 
     const double KineticFriction = 1.2;
-    const double dx = target.x - source.x;
-    const double dy = target.y - source.y;
+    const double dx = target.X() - source.X();
+    const double dy = target.Y() - source.Y();
     const double dz = elevationTarget - elevationSource;
     return (KineticFriction / std::sqrt(dx*dx + dy*dy + dz*dz));
 }
@@ -24,9 +25,10 @@ double DownHillCost::computeL1( const CellLocation& source,
                             const uint8_t elevationTarget )
 
 {
+    /// kinetic friction for down hill movement. 
     const double KineticFriction = 2.0;
-    const double dx = std::abs(target.x - source.x);
-    const double dy = std::abs(target.y - source.y);
+    const double dx = std::abs(target.X() - source.X());
+    const double dy = std::abs(target.Y() - source.Y());
     const double dz = std::abs(elevationTarget - elevationSource);
     return  (KineticFriction / (dx + dy + dz));
 }
@@ -48,7 +50,7 @@ double DownHillCost::computeAngle( const CellLocation& source,
     const double level = 15;
     const double KineticFriction = 0.25;
 
-    double distance = std::abs(source.x - target.x) + std::abs(source.y - target.y);
+    double distance = std::abs(source.X() - target.X()) + std::abs(source.Y() - target.Y());
     double dxdy = 1.0;
     if (distance == 2.0)
         double dxdy = std::sqrt(2.0);
@@ -65,8 +67,8 @@ double DownHillCost::computeDifficultyLevel( const CellLocation& source,
     const double level = 15;
     const double KineticFriction = 0.25;
 
-    const double dx = std::abs(target.x - source.x);
-    const double dy = std::abs(target.y - source.y);
+    const double dx = std::abs(target.X() - source.X());
+    const double dy = std::abs(target.Y() - source.Y());
     double dxdy = 1.0;
     if (dx + dy == 2.0)
         double dxdy = std::sqrt(2.0);

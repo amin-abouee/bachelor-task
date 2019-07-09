@@ -25,98 +25,94 @@ void AStar<T,P>::findShortestPath(SquareGridGraph<T, P>& graph,
                             const P& source, 
                             const P& target)
 {
-    Cost::CostModel downHillModel = Cost::CostModel::L2;
-    Cost::CostModel upHillModel = Cost::CostModel::L2;
-    using PQNode = std::pair<P, double>;
-    auto compare = [](const PQNode& lhs, const PQNode& rhs)
+    using PQCell = std::pair<P, double>;
+    auto compare = [](const PQCell& lhs, const PQCell& rhs)
                 {
                     return lhs.second > rhs.second; 
                 };
-    // std::priority_queue<T, std::vector<T>, decltype(compare)> frontier(compare);
 
-    std::priority_queue<PQNode, std::vector<PQNode>, decltype(compare)> frontier(compare);
+    /// create a priority queue (min heap) to have the smallest path for each moment
+    /// for this one, we create a priority queue that contains the cell location as well as the minimum cost to reach this cell from source
+    std::priority_queue<PQCell, std::vector<PQCell>, decltype(compare)> frontier(compare);
 
+    /// initialize all cells
     graph.initializeAllCells();
-    auto& sourceCell = graph(source.y, source.x);
-    sourceCell.weight = 0;
-    sourceCell.parent = std::addressof(sourceCell.loc);
 
-    frontier.push(std::make_pair(sourceCell.loc, 0));
+    /// get the source cell and put in PQ as start point
+    auto& sourceCell = graph(source.Y(), source.X());
+    sourceCell.setWeight(0.0);
+    /// for this part, we need to have the const reference or reference of each node
+    sourceCell.setParent(std::addressof(sourceCell.getLoc()));
+    frontier.push(std::make_pair(sourceCell.getLoc(), 0));
+
     while (!frontier.empty()) 
     {
+        /// location of top PQ
         P current = frontier.top().first;
         frontier.pop();
+        /// get the content of current position in grid graph in type T
         auto& currentCell = graph(current);
+        /// increase expended nodes by 1
         ShortestPath<T, P>::m_cntExpandedCells++;
 
-        if (currentCell.visited == true)
+        if (currentCell.getVisited() == true)
         {
             continue;
             std::cout << "WARNING " << std::endl;
         }
 
-        // std::cout << "X: " << current.loc.x << " Y: " << current.loc.y << std::endl;
-        if (currentCell.loc == target) 
+        /// if current expantion node == target, we find the shortest path. ENTRY EXIT!
+        if (currentCell.getLoc() == target) 
         {
-            currentCell.visited = true;
-            std::cout << "Location: " << currentCell.loc.x << " " << currentCell.loc.y << std::endl;
-            std::cout << "Weight: " << currentCell.weight << std::endl;
+            currentCell.setVisited(true);
+            std::cout << "Location: " << currentCell.getLoc().X() << " " << currentCell.getLoc().Y() << std::endl;
+            std::cout << "Weight: " << currentCell.getWeight() << std::endl;
             std::cout << "Expanded Cells: " << ShortestPath<T,P>::m_cntExpandedCells << std::endl;
             break;
         }
 
         std::vector<P> neighbours;
         neighbours.reserve(8);
-        graph.findNeighbours(currentCell.loc, overrides, neighbours);
+        graph.findNeighbours(currentCell.getLoc(), overrides, neighbours);
         for (const auto& next : neighbours) 
         {
             auto& nextNode = graph(next);
-            // if (nextNode.visited == false)
-            // {
-                // const double dx = next.x - current.x;
-                // const double dy = next.y - current.y;
-
-                const double dz = elevation(next.y , next.x) - elevation(current.y, current.x);
-                // double cost = std::sqrt(dx * dx + dy * dy + dz * dz);
-                // if (dz < 0)
-                //     cost = 1/cost;
-                double cost = 0;
-                if (dz > 0)
-                {
-                    cost = ShortestPath<T,P>::m_upHillCostEstimator->computeCost(current, elevation(current.y, current.x), next, elevation(next.y , next.x),  ShortestPath<T,P>::m_upHillCostModel);
-                }
-                else if ( dz < 0)
-                {
-                    cost = ShortestPath<T,P>::m_downHillCostEstimator->computeCost(current, elevation(current.y, current.x), next, elevation(next.y , next.x), ShortestPath<T,P>::m_downHillCostModel);
-                }
-                else
-                {
-                    cost = ShortestPath<T,P>::m_upHillCostEstimator->computeCost(current, elevation(current.y, current.x), next, elevation(next.y , next.x), Cost::CostModel::Octile);/* code */
-                }
-                
-
-                // const double dxBig = target.x - current.x;
-                // const double dyBig = target.y - current.y;
-                // cost += std::sqrt(dxBig * dxBig + dyBig * dyBig);
-                const double priority = cost;
-                // const double priority = cost + std::abs(dxBig) + std::abs(dyBig);
-                // const double priority = cost + std::sqrt(dxBig * dxBig + dyBig * dyBig);
-                if (relax(currentCell, nextNode, cost))
-                    frontier.push(std::make_pair(nextNode.loc, nextNode.weight + priority));
+            const double dz = elevation(next.Y() , next.X()) - elevation(current.Y(), current.X());
+            double cost = 0;
+            if (dz > 0)
+            {
+                cost = ShortestPath<T,P>::m_upHillCostEstimator->computeCost(current, elevation(current.Y(), current.X()), next, elevation(next.Y() , next.X()),  ShortestPath<T,P>::m_upHillCostModel);
+            }
+            else if ( dz < 0)
+            {
+                cost = ShortestPath<T,P>::m_downHillCostEstimator->computeCost(current, elevation(current.Y(), current.X()), next, elevation(next.Y() , next.X()), ShortestPath<T,P>::m_downHillCostModel);
+            }
+            else
+            {
+                cost = ShortestPath<T,P>::m_upHillCostEstimator->computeCost(current, elevation(current.Y(), current.X()), next, elevation(next.Y() , next.X()), Cost::CostModel::Octile);
+            }
+            const double dxBig = target.X() - current.Y();
+            const double dyBig = target.X() - current.Y();
+            // cost += std::sqrt(dxBig * dxBig + dyBig * dyBig);
+            const double priority = 0.0;
+            // const double priority = std::abs(dxBig) + std::abs(dyBig);
+            // const double priority = std::sqrt(dxBig * dxBig + dyBig * dyBig);
+            if (relax(currentCell, nextNode, cost))
+                frontier.push(std::make_pair(nextNode.getLoc(), nextNode.getWeight() + priority));
             // }
         }
-        currentCell.visited = true;
+        currentCell.setVisited(true);
     }
     updatePath(graph, source, target);
 }
 
 template <typename  T, typename P>
-bool AStar<T,P>::relax(T& current, T& next, double weight) const
+bool AStar<T,P>::relax(T& current, T& next, double cost) const
 {
-    if (next.weight > current.weight + weight)
+    if (next.getWeight() > current.getWeight() + cost)
     {
-        next.weight = current.weight + weight;
-        next.parent = &(current.loc);
+        next.setWeight (current.getWeight() + cost);
+        next.setParent (&(current.getLoc()));
         return true;
     }
     return false;
@@ -126,18 +122,18 @@ template <typename  T, typename P>
 void AStar<T,P>::updatePath(SquareGridGraph<T, P>& graph, const P& source, const P& target)
 {
     T& current = graph(target);
-    P prevoiusLocation {current.loc};
-    while(!(current.loc == source))
+    P prevoiusLocation {current.getLoc()};
+    while(!(current.getLoc() == source))
     {
-        graph(current.loc).path = true;
+        graph(current.getLoc()).setPath(true);
         ShortestPath<T, P>::m_cntTotalPath++;
-        current = graph(*current.parent);
-        int distance = std::abs(current.loc.x - prevoiusLocation.x) + std::abs(current.loc.y - prevoiusLocation.y);
+        current = graph(*current.getParent());
+        int distance = std::abs(current.getLoc().X() - prevoiusLocation.X()) + std::abs(current.getLoc().Y() - prevoiusLocation.Y());
         if (distance == 1)
             ShortestPath<T, P>::m_cntTotalStraightPath++;
         else
             ShortestPath<T, P>::m_cntTotalDiagonalPath++;
-        prevoiusLocation = current.loc;
+        prevoiusLocation = current.getLoc();
     }
     std::cout << "Total Path: " << ShortestPath<T,P>::m_cntTotalPath << std::endl;
     std::cout << "Straight Cells: " << ShortestPath<T,P>::m_cntTotalStraightPath << std::endl;

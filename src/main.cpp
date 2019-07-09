@@ -101,9 +101,9 @@ int main(int argc, char** argv)
 {
 
     std::ifstream fileReader( argv[1] );
-    // const nlohmann::json configFile = nlohmann::json::parse( fileReader );
-    nlohmann::json configFile;
-    fileReader >> configFile;
+    const nlohmann::json configFile = nlohmann::json::parse( fileReader );
+    // nlohmann::json configFile;
+    // fileReader >> configFile;
     const nlohmann::json& filePathsJsonNode = configFile[ "file_paths" ];
 
     const auto elevationFilepath = filePathsJsonNode[ "elevation_filepath" ].get< std::string >();
@@ -201,7 +201,7 @@ int main(int argc, char** argv)
             return uint8_t(visualizer::IPV_PATH);
         }
 
-        if (graph(y,x).path == true)
+        if (graph(y,x).getPath() == true)
         {
             // std::cout << "X: " << x << " Y: " << y << std::endl;
             return uint8_t(visualizer::IPV_PATH);
