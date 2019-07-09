@@ -6,9 +6,6 @@
 * @author Amin Abouee
 *
 * @section DESCRIPTION
-*   compute cost for up hill and down hill movements
-*   reference: http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html#heuristics-for-grid-maps
-*   reference: http://theory.stanford.edu/~amitp/GameProgramming/MovementCosts.html
 */
 #ifndef __COST_H__
 #define __COST_H__
@@ -18,8 +15,8 @@
 #include "cell_info.hpp"
 
 /**
- * @brief Compute cost for up hill and down hill movements
- *   reference: http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html#heuristics-for-grid-maps
+ * @brief Compute cost for up hill and down hill movements \n
+ *   reference: http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html#heuristics-for-grid-maps \n
  *   reference: http://theory.stanford.edu/~amitp/GameProgramming/MovementCosts.html
  * 
  */

@@ -17,9 +17,6 @@
  * https://www.gnu.org/copyleft/gpl.html
  *
  * @section DESCRIPTION
- * Graph class representation for square grid graph. This representation is specialized to find the shortest path
- * reference: Design Patterns for the Implementation of Graph Algorithms (http://www.dietmar-kuehl.de/generic-graph-algorithms.pdf)
- * reference: https://www.redblobgames.com/pathfinding/a-star/implementation.html#cplusplus
  */
 
 #ifndef __SQUARE_GRID_GRAPH_H__
@@ -32,8 +29,8 @@
 #include "cell_info.hpp"
 
 /**
- * @brief Graph class representation for square grid graph. This representation is specialized to find the shortest path
- * reference: Design Patterns for the Implementation of Graph Algorithms (http://www.dietmar-kuehl.de/generic-graph-algorithms.pdf)
+ * @brief Graph class representation for square grid graph. This representation is specialized to find the shortest path \n
+ * reference: Design Patterns for the Implementation of Graph Algorithms (http://www.dietmar-kuehl.de/generic-graph-algorithms.pdf) \n
  * reference: https://www.redblobgames.com/pathfinding/a-star/implementation.html#cplusplus
  * 
  * @tparam T type of grid cell value

@@ -17,8 +17,6 @@
  * https://www.gnu.org/copyleft/gpl.html
  *
  * @section DESCRIPTION
- * This class is a matrix representation for 1D data.
- * This wrapper class represents 1D vector with size n*n as a 2D matrix with size n by n
  */
 
 
@@ -30,7 +28,7 @@
 #include <limits>
 
 /**
- * @brief This class is a matrix representation for 1D data.
+ * @brief This class is a matrix representation for 1D data \n
  * This wrapper class represents 1D vector with size n*n as a 2D matrix with size n by n
  * 
  * @tparam T Template type name (unit8 or CellData)

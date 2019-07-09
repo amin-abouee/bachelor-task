@@ -6,7 +6,6 @@
 * @author Amin Abouee
 *
 * @section DESCRIPTION
-* This class represents the location of a cell inside a grid graph
 *
 */
 #ifndef __CELL_INFO_H__

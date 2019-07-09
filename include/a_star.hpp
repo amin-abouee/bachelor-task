@@ -17,10 +17,6 @@
  * https://www.gnu.org/copyleft/gpl.html
  *
  * @section DESCRIPTION
- * A* implementation for different heuristic and cost function model
- * reference: http://aigamedev.com/open/tutorials/theta-star-any-angle-paths/
- * reference: https://www.redblobgames.com/pathfinding/
- * reference: http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
  */
 
 #ifndef __A_STAR_H__
@@ -32,10 +28,10 @@
 #include "shortest_path.hpp"
 
 /**
- * @brief A* implementation for different heuristic and cost function model
- * reference: http://aigamedev.com/open/tutorials/theta-star-any-angle-paths/
- * reference: https://www.redblobgames.com/pathfinding/
- * reference: http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
+ * @brief A* implementation for different heuristic and cost function model \n
+ * reference: http://aigamedev.com/open/tutorials/theta-star-any-angle-paths/ \n
+ * reference: https://www.redblobgames.com/pathfinding/ \n
+ * reference: http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html \n
  * 
  * @tparam T data contain value
  * @tparam P type of movements

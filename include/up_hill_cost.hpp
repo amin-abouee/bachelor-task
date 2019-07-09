@@ -6,7 +6,6 @@
 * @author Amin Abouee
 *
 * @section DESCRIPTION
-*  Compute cost function for up hill movements for all defined method in Cost class
 *
 */
 #ifndef __UP_HILL_COST_H__

@@ -17,7 +17,6 @@
  * https://www.gnu.org/copyleft/gpl.html
  *
  * @section DESCRIPTION
- * This is a abstract class for finding the shortest path inside a grid graph
  *
  */
 
