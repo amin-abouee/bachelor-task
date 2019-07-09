@@ -31,13 +31,13 @@ public:
     enum class CostModel : unsigned int
     {
         Octile       = 0,
-        Pick         = 1,
-        L2           = 2,
-        L1           = 3,
-        LInf         = 4,
-        Angle        = 5,
-        DifficultyLevel = 6,
-        MeanPick    = 7,
+        Peak         = 1,
+        MeanPeak     = 2,
+        L2           = 3,
+        L1           = 4,
+        LInf         = 5,
+        Angle        = 6,
+        DifficultyLevel = 7,
     };
 
     ///C'tor

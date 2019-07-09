@@ -6,8 +6,8 @@
 std::map< std::string, Cost::CostModel > Cost::allModels
 {
   std::make_pair( "octile", Cost::CostModel::Octile ),
-  std::make_pair( "pick", Cost::CostModel::Pick ),
-  std::make_pair( "mean-pick", Cost::CostModel::MeanPick ),
+  std::make_pair( "peak", Cost::CostModel::Peak ),
+  std::make_pair( "mean-peak", Cost::CostModel::MeanPeak ),
   std::make_pair( "l2", Cost::CostModel::L2 ),
   std::make_pair( "l1", Cost::CostModel::L1 ),
   std::make_pair( "linf", Cost::CostModel::LInf ),
@@ -26,10 +26,10 @@ double Cost::computeCost(const CellLocation& source,
         case CostModel::Octile:
             return computeOctile( source, elevationSource, target, elevationTarget );
             // break;
-        case CostModel::Pick:
+        case CostModel::Peak:
             return computePeak( source, elevationSource, target, elevationTarget );
 
-        case CostModel::MeanPick:
+        case CostModel::MeanPeak:
             return computeMeanPeak( source, elevationSource, target, elevationTarget );
             // break;
         case CostModel::L2:

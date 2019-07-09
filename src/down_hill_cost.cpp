@@ -53,7 +53,7 @@ double DownHillCost::computeAngle( const CellLocation& source,
     double distance = std::abs(source.X() - target.X()) + std::abs(source.Y() - target.Y());
     double dxdy = 1.0;
     if (distance == 2.0)
-        double dxdy = std::sqrt(2.0);
+        dxdy = std::sqrt(2.0);
     const double dz = std::abs(elevationTarget - elevationSource);
     return ((std::atan2(dz, dxdy) * 180 / pi) / level) * KineticFriction;
 } 
@@ -71,10 +71,10 @@ double DownHillCost::computeDifficultyLevel( const CellLocation& source,
     const double dy = std::abs(target.Y() - source.Y());
     double dxdy = 1.0;
     if (dx + dy == 2.0)
-        double dxdy = std::sqrt(2.0);
+        dxdy = std::sqrt(2.0);
     const double dz = std::abs(elevationTarget - elevationSource);
     
     const double angleInDegree = (std::atan2(dz, dxdy) * 180 / pi);
     const double norm2 = std::sqrt(dx * dx + dy*dy + dz * dz);
-    return (norm2 * static_cast<int>(angleInDegree/level) * KineticFriction);
+    return (norm2 * (angleInDegree/level) * KineticFriction);
 }
