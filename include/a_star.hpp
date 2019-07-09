@@ -32,7 +32,10 @@
 #include "shortest_path.hpp"
 
 /**
- * @brief A* shortest path class
+ * @brief A* implementation for different heuristic and cost function model
+ * reference: http://aigamedev.com/open/tutorials/theta-star-any-angle-paths/
+ * reference: https://www.redblobgames.com/pathfinding/
+ * reference: http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
  * 
  * @tparam T data contain value
  * @tparam P type of movements

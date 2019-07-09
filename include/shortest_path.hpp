@@ -30,10 +30,10 @@
 #include "cost.hpp"
 
 /**
- * @brief Abstract class for findinf the path
+ * @brief Abstract class for finding the shortest path inside a grid graph
  * 
- * @tparam T 
- * @tparam P 
+ * @tparam T Template type name for cell content
+ * @tparam P How to move in this grid graph
  */
 template <typename  T, typename P>
 class ShortestPath

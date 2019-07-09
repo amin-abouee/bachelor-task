@@ -2,7 +2,7 @@
 * @file up_hill_cost,.hpp
 * @brief computed cost for uphill
 *
-* @date 
+* @date 08.07.2019
 * @author Amin Abouee
 *
 * @section DESCRIPTION
@@ -15,6 +15,10 @@
 #include <iostream>
 #include "cost.hpp"
 
+/**
+ * @brief Compute cost function for up hill movements for all defined method in Cost class (inheritance of Cost)
+ * 
+ */
 class UpHillCost final : public Cost
 {
 public:

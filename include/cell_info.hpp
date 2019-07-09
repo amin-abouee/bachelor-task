@@ -6,7 +6,7 @@
 * @author Amin Abouee
 *
 * @section DESCRIPTION
-* this class represents the location of a cell inside a grid graph
+* This class represents the location of a cell inside a grid graph
 *
 */
 #ifndef __CELL_INFO_H__
@@ -14,6 +14,10 @@
 
 #include <iostream>
 
+/**
+ * @brief This class represents the location of a cell inside a grid graph
+ * 
+ */
 class CellLocation final
 {
 public:

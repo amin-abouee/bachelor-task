@@ -30,9 +30,10 @@
 #include <limits>
 
 /**
- * @brief class Matrix
+ * @brief This class is a matrix representation for 1D data.
+ * This wrapper class represents 1D vector with size n*n as a 2D matrix with size n by n
  * 
- * @tparam T template type name
+ * @tparam T Template type name (unit8 or CellData)
  */
 template <typename  T>
 class Matrix final

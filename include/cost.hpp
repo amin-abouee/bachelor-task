@@ -2,7 +2,7 @@
 * @file cost.hpp
 * @brief compute cost for altitude uphill and downhill movement
 *
-* @date 06.07.2019
+* @date 07.07.2019
 * @author Amin Abouee
 *
 * @section DESCRIPTION
@@ -17,6 +17,12 @@
 #include <map>
 #include "cell_info.hpp"
 
+/**
+ * @brief Compute cost for up hill and down hill movements
+ *   reference: http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html#heuristics-for-grid-maps
+ *   reference: http://theory.stanford.edu/~amitp/GameProgramming/MovementCosts.html
+ * 
+ */
 class Cost
 {
 public:

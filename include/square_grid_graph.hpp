@@ -32,7 +32,9 @@
 #include "cell_info.hpp"
 
 /**
- * @brief Square grid graph representation
+ * @brief Graph class representation for square grid graph. This representation is specialized to find the shortest path
+ * reference: Design Patterns for the Implementation of Graph Algorithms (http://www.dietmar-kuehl.de/generic-graph-algorithms.pdf)
+ * reference: https://www.redblobgames.com/pathfinding/a-star/implementation.html#cplusplus
  * 
  * @tparam T type of grid cell value
  * @tparam P how we can traverse (move) in this graph (for example 2D, 3D or which kind of movements are possible)
