@@ -74,22 +74,26 @@ void AStar<T,P>::findShortestPath(SquareGridGraph<T, P>& graph,
         for (const auto& next : neighbours) 
         {
             auto& nextNode = graph(next);
-            const double dz = elevation(next.Y() , next.X()) - elevation(current.Y(), current.X());
+            // decide based on different of altitude
+            const uint8_t dz = elevation(next.Y() , next.X()) - elevation(current.Y(), current.X());
             double cost = 0;
             if (dz > 0)
             {
+                // up hill movement
                 cost = ShortestPath<T,P>::m_upHillCostEstimator->computeCost(current, elevation(current.Y(), current.X()), next, elevation(next.Y() , next.X()),  ShortestPath<T,P>::m_upHillCostModel);
             }
             else if ( dz < 0)
             {
+                // downhill movement
                 cost = ShortestPath<T,P>::m_downHillCostEstimator->computeCost(current, elevation(current.Y(), current.X()), next, elevation(next.Y() , next.X()), ShortestPath<T,P>::m_downHillCostModel);
             }
             else
             {
+                // octile movement
                 cost = ShortestPath<T,P>::m_upHillCostEstimator->computeCost(current, elevation(current.Y(), current.X()), next, elevation(next.Y() , next.X()), Cost::CostModel::Octile);
             }
-            const double dxBig = target.X() - current.Y();
-            const double dyBig = target.X() - current.Y();
+            const auto dxBig = target.X() - current.Y();
+            const auto dyBig = target.X() - current.Y();
             // cost += std::sqrt(dxBig * dxBig + dyBig * dyBig);
             const double priority = 0.0;
             // const double priority = std::abs(dxBig) + std::abs(dyBig);
@@ -100,7 +104,8 @@ void AStar<T,P>::findShortestPath(SquareGridGraph<T, P>& graph,
         currentCell.setVisited(true);
     }
     updatePath(graph, source, target);
-    printSummary(source, target);
+    printSummary(source, target, graph(target).getWeight());
+    checkPath(graph, overrides, elevation);
 }
 
 template <typename  T, typename P>
@@ -128,7 +133,7 @@ void AStar<T,P>::updatePath(SquareGridGraph<T, P>& graph, const P& source, const
         ShortestPath<T, P>::m_cntTotalPath++;
         // get the parent from curerent
         current = *graph(current).getParent();
-        int distance = std::abs(current.X() - prevoiusLocation.X()) + std::abs(current.Y() - prevoiusLocation.Y());
+        int32_t distance = std::abs(current.X() - prevoiusLocation.X()) + std::abs(current.Y() - prevoiusLocation.Y());
         // straight path
         if (distance == 1)
             ShortestPath<T, P>::m_cntTotalStraightPath++;
@@ -137,18 +142,15 @@ void AStar<T,P>::updatePath(SquareGridGraph<T, P>& graph, const P& source, const
             ShortestPath<T, P>::m_cntTotalDiagonalPath++;
         prevoiusLocation = current;
     }
-    // std::cout << "Total Path: " << ShortestPath<T,P>::m_cntTotalPath << std::endl;
-    // std::cout << "Straight Cells: " << ShortestPath<T,P>::m_cntTotalStraightPath << std::endl;
-    // std::cout << "Diagonal Cells: " << ShortestPath<T,P>::m_cntTotalDiagonalPath << std::endl;
 }
 
 template <typename  T, typename P>
-void AStar<T,P>::printSummary (const P& source, const P& target)
+void AStar<T,P>::printSummary (const P& source, const P& target, const double cost)
 {
     std::cout << "{" << std::endl;
     std::cout << "\t Path from Source: [" << source.X() << " , " << source.Y() << "] ";
     std::cout << "-> Target: [" << target.X() << " , " << target.Y() << "]" << std::endl;
-    // std::cout << "Total Weight: " << currentCell.getWeight() << std::endl;
+    std::cout << "\t Total Cost: " << cost << std::endl;
     std::cout << "\t Expanded Cells: " << ShortestPath<T,P>::m_cntExpandedCells << std::endl;
     std::cout << "\t Total Path Length: " << ShortestPath<T,P>::m_cntTotalPath << std::endl;
     std::cout << "\t Straight Path: " << ShortestPath<T,P>::m_cntTotalStraightPath << std::endl;
@@ -156,5 +158,23 @@ void AStar<T,P>::printSummary (const P& source, const P& target)
     std::cout << "}" << std::endl;
     std::cout << std::endl;
 }
+
+template <typename  T, typename P>
+void AStar<T,P>::checkPath (SquareGridGraph<T, P>& graph, const Matrix<uint8_t>& overrides, const Matrix<uint8_t>& elevation)
+{
+    for (int i=0; i< graph.getGridSize(); i++)
+    {
+        for (int j=0; j<graph.getGridSize(); j++)
+        {
+            P temp {j , i};
+            if (graph(temp).getVisited() == true && overrides(temp.Y(), temp.X()) > 0)
+            {
+                std::cout << "X: " << temp.X() << " y: " << temp.Y() << std::endl;
+                throw std::runtime_error(" HERE");
+            }
+        }
+    }
+}
+
 
 template class AStar<CellData, CellLocation>;

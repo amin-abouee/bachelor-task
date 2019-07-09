@@ -66,7 +66,7 @@ void SquareGridGraph<T,P>::findNeighbours(const P& source, const Matrix<uint8_t>
     for (auto& dir : movements) 
     {
         P next{source.X() + dir.X(), source.Y() + dir.Y()};
-        if (inBounds(next) && overrides(next.Y(), next.X()) == 0 && this->operator()(next).getVisited() == false) 
+        if (inBounds(next) && isAccessible(next, overrides) )
         {
             neighbours.push_back(next);
         }
@@ -92,6 +92,23 @@ bool SquareGridGraph<T,P>::inBounds(const P& location)
     return 0 <= location.X() && location.X() < m_gridSize
         && 0 <= location.Y() && location.Y() < m_gridSize;
 }
+
+template <typename  T, typename P>
+bool SquareGridGraph<T,P>::isAccessible (const P& cell, const Matrix<uint8_t>& overrides)
+{
+    if (overrides(cell.Y(), cell.X()) == 0 && m_graphData->operator()(cell.Y(), cell.X()).getVisited() == false)
+        return true;
+    else
+        return false;
+}
+
+
+template <typename  T, typename P>
+int32_t SquareGridGraph<T,P>::getGridSize () const
+{
+    return m_gridSize;
+}
+
 
 // template <typename  T, typename P>
 // std::ostream& operator>>( std::istream& out, SquareGridGraph<T, P>& graph)

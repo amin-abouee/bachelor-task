@@ -81,6 +81,9 @@ public:
     void setY(const int32_t y);
 
 private:
+    /// for two reason we need int32_t and not uint32_t
+    /// 1: represents movements that has -1 for x and y directions
+    /// 2: diff of two location can be computed as negative for x and y
     int32_t m_x;
     int32_t m_y;
 };

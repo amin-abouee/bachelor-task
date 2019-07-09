@@ -104,7 +104,16 @@ private:
      * @param source 
      * @param target 
      */
-    void printSummary (const P& source, const P& target);
+    void printSummary (const P& source, const P& target, const double cost);
+
+    /**
+     * @brief Check all paths and visited path with overrides and elevation (check possibility of error)
+     * 
+     * @param graph 
+     * @param overrides 
+     * @param elevation 
+     */
+    void checkPath (SquareGridGraph<T, P>& graph, const Matrix<uint8_t>& overrides, const Matrix<uint8_t>& elevation);
 };
 
 #endif /* __A_STAR_H__ */

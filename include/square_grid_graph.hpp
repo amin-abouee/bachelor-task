@@ -108,6 +108,9 @@ public:
      */
     void findNeighbours(const P& source, const Matrix<uint8_t>& overrides, std::vector<P>& neighbours);
 
+
+    int32_t getGridSize () const;
+
     // friend std::ostream& operator>>( std::istream& os, SquareGridGraph& graph);
 
 private:
@@ -119,6 +122,9 @@ private:
      * @return false if input is not inside the grid
      */
     bool inBounds(const P& location);
+
+    bool isAccessible (const P& cell, const Matrix<uint8_t>& overrides);
+
     /// size of grid (rows * cols)
     int32_t m_gridSize;
     /// number of possible movements that you can move in this grid

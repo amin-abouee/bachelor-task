@@ -55,9 +55,9 @@ double Cost::computeOctile( const CellLocation& source,
                             const CellLocation& target, 
                             const uint8_t elevationTarget )
 {
-    ///  manhattan distance between source and target
-    double distance = std::abs(source.X() - target.X()) + std::abs(source.Y() - target.Y());
-    if (distance == 1.0)
+    //  manhattan distance between source and target
+    const auto distance = std::abs(source.X() - target.X()) + std::abs(source.Y() - target.Y());
+    if (distance == 1)
         return 1.0;
     else
         return std::sqrt(2.0);

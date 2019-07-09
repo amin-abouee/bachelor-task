@@ -19,7 +19,7 @@ gtest_discover_tests(bachelor_test)
 
 if(CMAKE_BUILD_TYPE STREQUAL Debug)
 	set_target_properties(bachelor_test PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_DEBUG_DIR})
-	set_target_properties(bachelor_test PROPERTIES OUTPUT_NAME bachelor${BUILD_PREFIX})
+	set_target_properties(bachelor_test PROPERTIES OUTPUT_NAME bachelor_test${BUILD_PREFIX})
 else()
 	set_target_properties(bachelor_test PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RELEASE_DIR})
 endif()
