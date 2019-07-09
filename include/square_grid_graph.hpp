@@ -92,6 +92,7 @@ public:
      */
     T & operator()(const P& location);
 
+
     /**
      * @brief initialize all variable of template T to default value
      * 
@@ -123,7 +124,7 @@ private:
     /// number of possible movements that you can move in this grid
     int8_t m_possibleMovements;
     /// graph data 
-    std::unique_ptr<Matrix<T>> m_graphData;
+    std::unique_ptr< Matrix<T> > m_graphData;
     /// all possible movements that you can move in this grid
     std::vector<P> movements;
 };

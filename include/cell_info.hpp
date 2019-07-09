@@ -20,22 +20,22 @@
 class CellLocation final
 {
 public:
-    //C'tor
+    /// C'tor
     explicit CellLocation();
 
-    //C'tor
+    /// C'tor
     explicit CellLocation(const int32_t x, const int32_t y);
 
-    //Copy C'tor
+    /// Copy C'tor
     CellLocation(const CellLocation& rhs);
 
-    //move C'tor
+    /// Move C'tor
     CellLocation(CellLocation&& rhs);
 
-    //Copy assignment operator
+    /// Copy assignment operator
     CellLocation& operator=(const CellLocation& rhs);
 
-    //move assignment operator
+    /// Move assignment operator
     CellLocation& operator=(CellLocation&& rhs);
 
     //D'tor
@@ -66,14 +66,23 @@ public:
      */
     int Y() const;
 
-
+    /**
+     * @brief Set the x value
+     * 
+     * @param x 
+     */
     void setX(const int32_t x);
 
+    /**
+     * @brief Set the y value
+     * 
+     * @param y 
+     */
     void setY(const int32_t y);
 
 private:
-    int32_t x;
-    int32_t y;
+    int32_t m_x;
+    int32_t m_y;
 };
 
 
@@ -89,7 +98,7 @@ public:
     /// C'tor
     explicit CellData();
 
-    explicit CellData(const CellLocation _loc, const double _weight, const bool _visited, const bool _path);
+    explicit CellData(const CellLocation loc, const double weight, const bool visited, const bool path);
 
     /// Copy C'tor
     CellData(const CellData& rhs);
@@ -106,7 +115,7 @@ public:
     /// D'tor
     ~CellData() = default;
 
-    /// Reset all member variable to default values
+    /// Reset all member variable to default values \n
     /// Reference: Introduction to algorithm, CLRS, chapter: 24, page: 648
     void initialize();
 
@@ -116,7 +125,7 @@ public:
      * @param x position in x (col) axis
      * @param y position in y (row) axis
      */
-    void setLoc(const int32_t _x, const int32_t _y);
+    void setLoc(const int32_t x, const int32_t y);
 
     CellLocation& getLoc();
 
@@ -141,36 +150,78 @@ public:
      */
     const CellData& getData() const;
 
-    // CellLocation* getParent();
-
+    /**
+     * @brief Get the parent variable
+     * 
+     * @return const CellLocation* 
+     */
     const CellLocation* getParent() const ;
 
-
+    /**
+     * @brief Get the weight variable
+     * 
+     * @return const double 
+     */
     const double getWeight() const;
 
+    /**
+     * @brief Get the visited variable
+     * 
+     * @return true 
+     * @return false 
+     */
     const bool getVisited() const;
 
+    /**
+     * @brief Get the path variable
+     * 
+     * @return true 
+     * @return false 
+     */
     const bool getPath() const;
 
 
+    /**
+     * @brief Set the parent variable
+     * 
+     * @param _parent 
+     */
     void setParent(const CellLocation* _parent);
-    // void setParent(CellLocation* _parent);
 
+    /**
+     * @brief Set the weight variable
+     * 
+     * @param weight 
+     */
+    void setWeight(const double weight);
 
-    void setWeight(double _weight);
+    /**
+     * @brief Set the visited variable
+     * 
+     * @param visited 
+     */
+    void setVisited(const bool visited);
 
-    void setVisited(bool _visited);
-
-    void setPath(bool _path);
+    /**
+     * @brief Set the path variable
+     * 
+     * @param path 
+     */
+    void setPath(const bool path);
 
 
 
 private:
-    const CellLocation* parent;
-    CellLocation loc;
-    double weight;
-    bool visited;
-    bool path;
+    /// Pointer to parent cell
+    const CellLocation* m_parent;
+    /// 2D location of cell
+    CellLocation m_loc;
+    /// weight of current cell, used for shortest path
+    double m_weight;
+    /// visiting flag
+    bool m_visited;
+    /// possibility of path 
+    bool m_path;
  };
 
  #endif /* __CELL_INFO_H__ */

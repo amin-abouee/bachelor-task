@@ -62,7 +62,7 @@ public:
     AStar &operator=(AStar && rhs) = default;
 
     /**
-     * @brief override function of shortest path class that computes the shortest path inside a grid graph from source cell to target cell
+     * @brief Override function of shortest path class that computes the shortest path inside a grid graph from source cell to target cell
      * 
      * @param graph input graph
      * @param elevation altitude of grid graph
@@ -78,7 +78,7 @@ public:
 
 private:
     /**
-     * @brief update weight and parent a cell if the new computed weight is less than current one
+     * @brief Update weight and parent a cell if the new computed weight is less than current one
      * reference: Introduction to algorithms, CLRS, chapter 24, page 649
      * 
      * @param current value and location of current cell
@@ -90,13 +90,21 @@ private:
     bool relax(T& current, T& next, double cost) const;
 
     /**
-     * @brief find path from source cell to target cell
+     * @brief Find path from source cell to target cell
      * 
      * @param graph square grid graph
      * @param source input cell content
      * @param target target cell content
      */
     void updatePath (SquareGridGraph<T, P>& graph, const P& source, const P& target);
+
+    /**
+     * @brief Print summary information from all paths
+     * 
+     * @param source 
+     * @param target 
+     */
+    void printSummary (const P& source, const P& target);
 };
 
 #endif /* __A_STAR_H__ */

@@ -16,7 +16,6 @@ include_directories(${CMAKE_SOURCE_DIR}/visualizer/include
 
 
 set(LIBRARY_SOURCES
-    main.cpp
     matrix.cpp
     cell_info.cpp
     square_grid_graph.cpp
@@ -29,9 +28,13 @@ set(LIBRARY_SOURCES
 
 
 # include_directories(math.hpp)
-# add_library(source SHARED ${library_SOURCES})
-add_executable(bachelor ${LIBRARY_SOURCES})
-target_link_libraries (bachelor visualizer)
+add_library(source SHARED ${LIBRARY_SOURCES})
+
+set_target_properties(source PROPERTIES CMAKE_CXX_STANDARD_REQUIRED ON)
+set_target_properties(source PROPERTIES CXX_STANDARD 17)
+
+add_executable(bachelor main.cpp)
+target_link_libraries (bachelor visualizer source)
 
 set_target_properties(bachelor PROPERTIES CMAKE_CXX_STANDARD_REQUIRED ON)
 set_target_properties(bachelor PROPERTIES CXX_STANDARD 17)

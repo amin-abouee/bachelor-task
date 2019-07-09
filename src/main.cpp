@@ -101,30 +101,27 @@ int main(int argc, char** argv)
 {
 
     std::ifstream fileReader( argv[1] );
-    const nlohmann::json configFile = nlohmann::json::parse( fileReader );
-    // nlohmann::json configFile;
-    // fileReader >> configFile;
+    // const nlohmann::json configFile = nlohmann::json::parse( fileReader );
+    nlohmann::json configFile;
+    fileReader >> configFile;
     const nlohmann::json& filePathsJsonNode = configFile[ "file_paths" ];
 
     const auto elevationFilepath = filePathsJsonNode[ "elevation_filepath" ].get< std::string >();
     const auto overridesFilepath = filePathsJsonNode[ "overrides_filepath" ].get< std::string >();
-    // std::cout << elevationFilepath << std::endl;
-    // std::cout << overridesFilepath << std::endl;
 
     const nlohmann::json& constraintsJsonNode = configFile[ "constraints" ];
     const uint32_t imageDimension = constraintsJsonNode["image_dimension"].get<int32_t>();
     std::cout << "image dimension: " << imageDimension << std::endl;
-    // CellLocation temp {0, 0};
-    const auto roverLoc = constraintsJsonNode["rover_loc"].get<std::pair<int32_t, int32_t>>();
-    // const auto [temp.x ,temp.y] = constraintsJsonNode["rover_loc"].get<std::pair<int32_t, int32_t>>();
-    const auto bachelorLoc = constraintsJsonNode["bachelor_loc"].get<std::pair<int32_t, int32_t>>();
-    const auto weddingLoc = constraintsJsonNode["wedding_loc"].get<std::pair<int32_t, int32_t>>();
-    std::cout << roverLoc.first << " " << roverLoc.second << std::endl;
-    // std::cout << temp.x << " " << temp.y << std::endl;
-    std::cout << bachelorLoc.first << " " << bachelorLoc.second << std::endl;
-    std::cout << weddingLoc.first << " " << weddingLoc.second << std::endl;
+    const auto roverLocPair = constraintsJsonNode["rover_loc"].get<std::pair<int32_t, int32_t>>();
+    const auto bachelorLocPair = constraintsJsonNode["bachelor_loc"].get<std::pair<int32_t, int32_t>>();
+    const auto weddingLocPair = constraintsJsonNode["wedding_loc"].get<std::pair<int32_t, int32_t>>();
+    CellLocation roverLoc {roverLocPair.first, roverLocPair.second};
+    CellLocation bachelorLoc {bachelorLocPair.first, bachelorLocPair.second};
+    CellLocation weddingLoc {weddingLocPair.first, weddingLocPair.second};
 
-
+    std::cout << "Rover Location: [ "<< roverLoc.X() << " , " << roverLoc.Y() << "]" << std::endl;
+    std::cout << "Bachelor Location: [ " << bachelorLoc.X() << " , " << bachelorLoc.Y() << "]" << std::endl;
+    std::cout << "Wedding Location: [ " << weddingLoc.X() << " , " << weddingLoc.Y() << "]" << std::endl;
 
     Matrix<uint8_t> elevation{imageDimension, imageDimension};
     Matrix<uint8_t> overrides{imageDimension, imageDimension};
@@ -140,13 +137,9 @@ int main(int argc, char** argv)
     //     anchor = pname.substr(0, lastpos) + PATH_SEP;
     // }
     // std::cout << "anchor: " << anchor << std::endl;
-    // auto elevation = loadFile(elevationFilepath, expectedFileSize);
-    // auto overrides = loadFile(overridesFilepath, expectedFileSize);
 
     loadFile(elevationFilepath, elevation);
     loadFile(overridesFilepath, overrides);
-    // std::cout << a << std::endl;
-    // auto overrides2 = loadFile2(overridesFilepath, imageDimension);
 
     const nlohmann::json& SPPJsonNode = configFile[ "shortest_path_parameters" ];
     const auto upHillCostModel = SPPJsonNode["up_hill_cost_model"].get<std::string>();
@@ -154,26 +147,14 @@ int main(int argc, char** argv)
     std::cout << "Up Hill Model Name: " << upHillCostModel << std::endl;
     std::cout << "Down Hill Model Name: " << downHillCostModel << std::endl;
 
-
     SquareGridGraph<CellData, CellLocation> graph(imageDimension, 8);
     std::unique_ptr<ShortestPath<CellData, CellLocation>> shortestPath = std::make_unique<AStar<CellData, CellLocation>>(downHillCostModel, upHillCostModel);
-    CellLocation roverplace{static_cast<int32_t>(roverLoc.first), static_cast<int32_t>(roverLoc.second)};
-    CellLocation bachelorplace{static_cast<int32_t>(bachelorLoc.first), static_cast<int32_t>(bachelorLoc.second)};
-    shortestPath->findShortestPath(graph, elevation, overrides, roverplace, bachelorplace);
+    // CellLocation roverplace{static_cast<int32_t>(roverLoc.first), static_cast<int32_t>(roverLoc.second)};
+    // CellLocation bachelorplace{static_cast<int32_t>(bachelorLoc.first), static_cast<int32_t>(bachelorLoc.second)};
+    // CellLocation weddingplace{static_cast<int32_t>(weddingLoc.first), static_cast<int32_t>(weddingLoc.second)};
+    shortestPath->findShortestPath(graph, elevation, overrides, roverLoc, bachelorLoc);
+    shortestPath->findShortestPath(graph, elevation, overrides, bachelorLoc, weddingLoc);
 
-    // std::cout << newGraph(0, 0).loc.x << " " << newGraph(0, 0).loc.y << " " << newGraph(0, 0).weight << std::endl;
-
-    // Matrix<GridWithWeights> grid {imageDimension, imageDimension};    
-    // auto result = dijkstraSearch(imageDimension, grid, elevation, overrides, roverLoc, bachelorLoc);
-    // auto result = dijkstraSearch2(graph, elevation, overrides, roverLoc, bachelorLoc);
-
-    // for(const auto& ll : result)
-        // graph(ll.y, ll.x).path = true;
-
-    // std::cout << (int)grid(roverLoc.second, roverLoc.first).path << std::endl;
-    // std::cout << (int)grid(bachelorLoc.second, bachelorLoc.first).path << std::endl;
-    // std::cout << "X: " << 
-    // }
 
     // for (int i = 0; i < imageDimension; i++)
     // {
@@ -194,9 +175,9 @@ int main(int argc, char** argv)
     auto pixelFilter = [&graph, &overrides, &imageDimension, &roverLoc, &bachelorLoc, &weddingLoc] (size_t x, size_t y, uint8_t elevation) 
     {
         // Marks interesting positions on the map
-        if (donut(x, y, roverLoc.first, roverLoc.second) ||
-            donut(x, y, bachelorLoc.first, bachelorLoc.second) ||
-            donut(x, y, weddingLoc.first, weddingLoc.second))
+        if (donut(x, y, roverLoc.X(), roverLoc.Y()) ||
+            donut(x, y, bachelorLoc.X(), bachelorLoc.Y()) ||
+            donut(x, y, weddingLoc.X(), weddingLoc.Y()))
         {
             return uint8_t(visualizer::IPV_PATH);
         }
@@ -233,7 +214,7 @@ int main(int argc, char** argv)
     auto res = system("open pic.bmp");
     (void)res;
 #endif
-    std::cout << "FINISH: " << std::endl;
+    std::cout << "FINISH" << std::endl;
     return 0;
 }
 

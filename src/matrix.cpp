@@ -4,7 +4,17 @@
 template <typename T>
 Matrix<T>::Matrix(const uint32_t numRows, const uint32_t numCols): m_numRows(numRows), m_numCols(numCols), m_matrix(m_numRows*numCols)
 {
+}
 
+template <typename T>
+Matrix<T>::Matrix(const uint32_t numRows, const uint32_t numCols, std::vector<T>& data) : m_numRows(numRows), m_numCols(numCols), m_matrix(m_numRows*numCols)
+{
+    if (data.size() == m_numRows*numCols)
+        std::copy ( data.begin(), data.end(), m_matrix.begin() );
+    else
+    {
+        throw std::runtime_error("the size of input and matrix do not match");
+    }
 }
 
 template <typename T>
@@ -62,21 +72,23 @@ uint32_t Matrix<T>::getTotalSize() const
 }
 
 
-template <typename T>
-std::ostream& operator>>( std::ostream& out, Matrix<T>& mat)
-{
-    const uint32_t sizeCols = mat.getSizeCols();
-    const uint32_t sizeRows = mat.getSizeRows();
+// template <typename T>
+// std::ostream& operator>>( std::ostream& out, Matrix<T>& mat)
+// {
+//     const uint32_t sizeCols = mat.getSizeCols();
+//     const uint32_t sizeRows = mat.getSizeRows();
 
-    for (int c = 0; c < sizeCols; c++){
-        for (int r = 0; r < sizeRows; r++){
-            out << mat[c][r] << " ";
-        }
-        out << std::endl;
-    }
-    return out;
-}
+//     for (int r = 0; r < sizeRows; r++){
+//         for (int c = 0; c < sizeCols; c++){
+//             out << mat[r][c] << " ";
+//         }
+//         out << std::endl;
+//     }
+//     return out;
+// }
 
 
 template class Matrix<uint8_t>;
+template class Matrix<uint16_t>;
+template class Matrix<uint32_t>;
 template class Matrix<CellData>;

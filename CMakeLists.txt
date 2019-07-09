@@ -22,7 +22,7 @@ endif()
 
 add_subdirectory(visualizer)
 add_subdirectory(src)
-# add_subdirectory(test)
+add_subdirectory(test)
 
 # add_executable(Bachelor main.cpp)
 # target_link_libraries(Bachelor visualizer)

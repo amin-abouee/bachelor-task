@@ -40,6 +40,9 @@ public:
     /// C'tor
     explicit Matrix(const uint32_t numRows, const uint32_t numCols);
 
+    /// C'tor
+    explicit Matrix(const uint32_t numRows, const uint32_t numCols, std::vector<T>& data);
+
     /// D'tor
     virtual ~Matrix() = default;
 
@@ -122,8 +125,10 @@ public:
      */
     uint32_t getTotalSize() const;
 
+    //TODO: set function
 
-    friend std::ostream& operator>>( std::istream& os, Matrix& mat);
+
+    // friend std::ostream& operator>>( std::istream& os, Matrix& mat);
 
 private:
     /// number of rows
