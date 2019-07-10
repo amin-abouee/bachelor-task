@@ -38,7 +38,8 @@ double DownHillCost::computeLInf( const CellLocation& source,
                             const CellLocation& target, 
                             const uint8_t elevationTarget )
 {
-    return (1 / (double)std::abs(elevationTarget- elevationSource));
+    // we know the diff of elevation (dz) is always more than dx and dy
+    return (1 / (double)std::abs(elevationTarget - elevationSource));
 }
 
 double DownHillCost::computeAngle( const CellLocation& source, 
@@ -78,7 +79,7 @@ double DownHillCost::computeDifficultyLevel( const CellLocation& source,
     return (norm2 * (angleInDegree/level) * KineticFriction);
 }
 
-double DownHillCost::computeL2Trimm( const CellLocation& source, 
+double DownHillCost::computeL2Trim( const CellLocation& source, 
                             const uint8_t elevationSource, 
                             const CellLocation& target, 
                             const uint8_t elevationTarget )

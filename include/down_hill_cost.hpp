@@ -118,7 +118,7 @@ public:
      * @param elevationTarget 
      * @return double norm2 if angle is less than 60
      */
-    double computeL2Trimm( const CellLocation& source, 
+    double computeL2Trim( const CellLocation& source, 
                             const uint8_t elevationSource, 
                             const CellLocation& target, 
                             const uint8_t elevationTarget );

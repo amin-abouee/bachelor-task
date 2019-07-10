@@ -42,9 +42,6 @@ double Heuristic::computeHeuristic(const CellLocation& source,
 
         case HeuristicModel::DiagonalAltitude:
             return computeDiagonal( source, target, model, aveAltitude );
-
-        // case HeuristicModel::ThetaStar:
-            // return computeThetaStar( source, target, model, aveAltitude );
     }
 }
 

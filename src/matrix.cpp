@@ -13,7 +13,7 @@ Matrix<T>::Matrix(const uint32_t numRows, const uint32_t numCols, std::vector<T>
         std::copy ( data.begin(), data.end(), m_matrix.begin() );
     else
     {
-        throw std::runtime_error("the size of input and matrix do not match");
+        throw std::runtime_error("The size of input vector and matrix do not match");
     }
 }
 
@@ -70,22 +70,6 @@ uint32_t Matrix<T>::getTotalSize() const
 {
     return m_numCols * m_numRows;
 }
-
-
-// template <typename T>
-// std::ostream& operator>>( std::ostream& out, Matrix<T>& mat)
-// {
-//     const uint32_t sizeCols = mat.getSizeCols();
-//     const uint32_t sizeRows = mat.getSizeRows();
-
-//     for (int r = 0; r < sizeRows; r++){
-//         for (int c = 0; c < sizeCols; c++){
-//             out << mat[r][c] << " ";
-//         }
-//         out << std::endl;
-//     }
-//     return out;
-// }
 
 template class Matrix<uint8_t>;
 template class Matrix<uint16_t>;

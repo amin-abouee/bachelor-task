@@ -14,7 +14,8 @@
 #include <iostream>
 
 /**
- * @brief This class represents the location of a cell inside a grid graph
+ * @brief This class represents the location of a cell inside a grid graph. For this 2D grid graph, we need to have the x and y values
+ * for movements. For 3D grid, we need to extent this class to also consider the z direction.
  * 
  */
 class CellLocation final
@@ -97,8 +98,8 @@ private:
 
 // /**
 // * @section DESCRIPTION
-// * This class designed as a data container inside the grid graph
-// * The data member variable mostly used for finding the shortest path inside a grid graph
+// * This class is a data holder for a grid graph
+// * The data member variables mostly used for finding the shortest path inside a grid
 // */
 
 class CellData final

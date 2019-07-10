@@ -51,7 +51,6 @@ void AStar<T,P>::findShortestPath(SquareGridGraph<T, P>& graph,
 
     // compute average of altitude based on the heuristic model
     const double aveAltitude = computeAverageAltitudeInPath(source, target, elevation, overrides);
-    // std::cout << "ave altitude: " << aveAltitude << std::endl;
 
     // get the source cell and put in PQ as start point
     auto& sourceCell = graph(source.Y(), source.X());
@@ -70,12 +69,6 @@ void AStar<T,P>::findShortestPath(SquareGridGraph<T, P>& graph,
         // increase expended nodes by 1
         ShortestPath<T, P>::m_cntExpandedCells++;
 
-        // if (currentCell.getVisited() == true)
-        // {
-        //     continue;
-        //     std::cout << "WARNING " << std::endl;
-        // }
-
         // if current expantion node == target, we find the shortest path. ENTRY EXIT!
         if (currentCell.getLoc() == target) 
         {
@@ -83,6 +76,7 @@ void AStar<T,P>::findShortestPath(SquareGridGraph<T, P>& graph,
             break;
         }
 
+        // find all eligible neighbours from grid
         std::vector<P> neighbours;
         neighbours.reserve(8);
         graph.findNeighbours(currentCell.getLoc(), overrides, elevation, neighbours);
@@ -113,8 +107,10 @@ void AStar<T,P>::findShortestPath(SquareGridGraph<T, P>& graph,
             if (relax(currentCell, nextNode, cost))
                 frontier.push(std::make_pair(nextNode.getLoc(), nextNode.getWeight() + priority));
         }
+        // the current node visited and archived
         currentCell.setVisited(true);
     }
+    // find path from source to target and set path bool
     updatePath(graph, source, target);
     printSummary(source, target, graph(target).getWeight());
     // checkPath(graph, overrides);

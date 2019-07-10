@@ -40,6 +40,7 @@ std::ifstream::pos_type fileSize(const std::string& filename)
     return in.tellg();
 }
 
+// load raw data in a matrix of type uint_t
 void loadFile(const std::string& filename, Matrix<uint8_t>& mat)
 {
     const uint32_t expectedFileSize = mat.getTotalSize();
@@ -126,8 +127,11 @@ int main(int argc, char** argv)
     std::cout << "Down Hill Model: " << downHillCostModel << std::endl;
     std::cout << "Heuristic Model: " << heuristicModel << std::endl;
 
-
+    // Create a square grid graph of size imageDimension * imageDimension with 8 available movements
+    // Each cell is a type of celldata and we need cell location for move in this grid
     SquareGridGraph<CellData, CellLocation> graph(imageDimension, 8);
+
+    // create an A* object from base class shortest_path
     std::unique_ptr<ShortestPath<CellData, CellLocation>> shortestPath = std::make_unique<AStar<CellData, CellLocation>>(downHillCostModel, upHillCostModel, heuristicModel);
     shortestPath->findShortestPath(graph, elevation, overrides, roverLoc, bachelorLoc);
     shortestPath->findShortestPath(graph, elevation, overrides, bachelorLoc, weddingLoc);

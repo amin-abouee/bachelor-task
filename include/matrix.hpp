@@ -16,7 +16,7 @@
 
 /**
  * @brief Matrix representation for 1D data with size n*n \n
- * This wrapper class represents 1D vector with size n*n as a 2D matrix with size n by n
+ * This wrapper class manipulates a 1D vector with size n*n in the form of 2D matrix with size n by n
  * 
  * @tparam T Template type name (unit8 or CellData)
  */
@@ -112,7 +112,6 @@ public:
      */
     uint32_t getTotalSize() const;
 
-    //TODO: set function
 
 
     // friend std::ostream& operator>>( std::ostream& os, Matrix& mat);
@@ -122,7 +121,7 @@ private:
     std::uint32_t m_numRows;
     /// number of cols
     std::uint32_t m_numCols;
-    /// data vecto
+    /// data vector
     std::vector<T> m_matrix;
 };
 

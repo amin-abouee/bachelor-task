@@ -13,7 +13,7 @@
     },
     "shortest_path_parameters":
     {
-        "up_hill_cost_model" : "l2",
+        "up_hill_cost_model" : "l2-trim",
         "down_hill_cost_model" : "l2",
         "heuristic_model" : "diagonal"
     }

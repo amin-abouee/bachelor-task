@@ -34,6 +34,11 @@ SquareGridGraph<T,P>::SquareGridGraph(const uint32_t gridSize, const uint8_t pos
         movements.emplace_back(P{0, 1});
         movements.emplace_back(P{-1, 1});
     }
+    else
+    {
+        throw std::runtime_error("The only supporting movements right now is 8");
+    }
+    
 }
 
 template <typename  T, typename P>

@@ -13,7 +13,7 @@ std::map< std::string, Cost::CostModel > Cost::allModels
   std::make_pair( "linf", Cost::CostModel::LInf ),
   std::make_pair( "angle", Cost::CostModel::Angle ),
   std::make_pair( "dificulty-level", Cost::CostModel::DifficultyLevel ),
-  std::make_pair( "l2-trimm", Cost::CostModel::L2Trimm )
+  std::make_pair( "l2-trim", Cost::CostModel::L2Trim )
 };
 
 double Cost::computeCost(const CellLocation& source, 
@@ -48,8 +48,8 @@ double Cost::computeCost(const CellLocation& source,
         case CostModel::DifficultyLevel:
             return computeDifficultyLevel( source, elevationSource, target, elevationTarget );
 
-        case CostModel::L2Trimm:
-            return computeL2Trimm( source, elevationSource, target, elevationTarget );
+        case CostModel::L2Trim:
+            return computeL2Trim( source, elevationSource, target, elevationTarget );
     }
 }
 

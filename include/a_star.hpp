@@ -16,7 +16,7 @@
 #include "heuristic.hpp"
 
 /**
- * @brief A* implementation for different heuristic and cost function model \n
+ * @brief A* implementation that works with any arbitrary heuristic and cost function models \n
  * reference: http://aigamedev.com/open/tutorials/theta-star-any-angle-paths/ \n
  * reference: https://www.redblobgames.com/pathfinding/ \n
  * reference: http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html \n

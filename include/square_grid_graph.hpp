@@ -99,7 +99,6 @@ public:
 
     int32_t getGridSize () const;
 
-    // friend std::ostream& operator>>( std::istream& os, SquareGridGraph& graph);
 
 private:
     /**

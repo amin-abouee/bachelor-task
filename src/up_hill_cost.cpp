@@ -72,7 +72,7 @@ double UpHillCost::computeDifficultyLevel( const CellLocation& source,
     return norm2 * (angleInDegree/level);
 }
 
-double UpHillCost::computeL2Trimm( const CellLocation& source, 
+double UpHillCost::computeL2Trim( const CellLocation& source, 
                             const uint8_t elevationSource, 
                             const CellLocation& target, 
                             const uint8_t elevationTarget )

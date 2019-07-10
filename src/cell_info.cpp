@@ -85,7 +85,6 @@ CellData::CellData(const CellLocation loc, const double weight, const bool visit
 
 CellData::CellData(const CellData& rhs)
 {
-    // parent = rhs.getParent();
     m_loc = rhs.getLoc();
     m_weight = rhs.getWeight();
     m_visited = rhs.getVisited();

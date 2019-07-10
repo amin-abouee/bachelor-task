@@ -39,7 +39,7 @@ public:
         LInf         = 5,
         Angle        = 6,
         DifficultyLevel = 7,
-        L2Trimm      = 8
+        L2Trim      = 8
     };
 
     ///C'tor
@@ -194,7 +194,7 @@ virtual double computeDifficultyLevel( const CellLocation& source,
                             const uint8_t elevationTarget ) = 0;
 
 /**
- * @brief Compute L2 norm from source to target if angle is less than 60
+ * @brief Compute L2 norm if angle is less than 60
  * 
  * @param source 
  * @param elevationSource 
@@ -202,7 +202,7 @@ virtual double computeDifficultyLevel( const CellLocation& source,
  * @param elevationTarget 
  * @return double angle(source, target) / 15 * norm L2
  */
-virtual double computeL2Trimm( const CellLocation& source, 
+virtual double computeL2Trim( const CellLocation& source, 
                             const uint8_t elevationSource, 
                             const CellLocation& target, 
                             const uint8_t elevationTarget ) = 0;
