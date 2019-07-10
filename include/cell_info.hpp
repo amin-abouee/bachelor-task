@@ -95,13 +95,11 @@ private:
     int32_t m_y;
 };
 
-
-// /**
-// * @section DESCRIPTION
-// * This class is a data holder for a grid graph
-// * The data member variables mostly used for finding the shortest path inside a grid
-// */
-
+/**
+ * @brief This class is a data holder for a grid graph
+ * The data member variables mostly used for finding the shortest path inside a grid
+ * 
+ */
 class CellData final
 {
 public:
