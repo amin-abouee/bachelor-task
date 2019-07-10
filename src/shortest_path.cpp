@@ -45,5 +45,15 @@ ShortestPath<T,P>::ShortestPath(const std::string& downHillCostModel, const std:
     }
 }
 
+template <typename  T, typename P>
+void ShortestPath<T,P>::resetMemberVariables()
+{
+    m_cntExpandedCells = 0;
+    m_cntTotalPath = 0;
+    m_cntTotalStraightPath = 0;
+    m_cntTotalDiagonalPath = 0;
+}
+
+
 template class ShortestPath<CellData, CellLocation>;
 

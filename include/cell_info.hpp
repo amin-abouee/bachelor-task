@@ -212,8 +212,6 @@ public:
      */
     void setPath(const bool path);
 
-
-
 private:
     /// Pointer to parent cell
     const CellLocation* m_parent;

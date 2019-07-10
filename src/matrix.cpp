@@ -87,7 +87,6 @@ uint32_t Matrix<T>::getTotalSize() const
 //     return out;
 // }
 
-
 template class Matrix<uint8_t>;
 template class Matrix<uint16_t>;
 template class Matrix<uint32_t>;

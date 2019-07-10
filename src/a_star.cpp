@@ -7,15 +7,25 @@
 #include <cmath>
 
 template <typename  T, typename P>
-AStar<T,P>::AStar() : ShortestPath<T,P>() 
+AStar<T,P>::AStar() : ShortestPath<T,P>(), m_heuristicEstimator(), m_heuristicModel(Heuristic::HeuristicModel::Diagonal)
 {
 
 }
 
 template <typename  T, typename P>
-AStar<T,P>::AStar(const std::string& downHillCostModel, const std::string& upHillCostModel): ShortestPath<T,P>(downHillCostModel, upHillCostModel)
+AStar<T,P>::AStar(const std::string& downHillCostModel, const std::string& upHillCostModel, const std::string& heuristicModel): 
+    ShortestPath<T,P>(downHillCostModel, upHillCostModel), m_heuristicEstimator()
 {
-
+    // auto it = m_heuristicEstimator.allModels.find(heuristicModel);
+    // if (it != m_heuristicEstimator.allModels.end())
+    // {
+    //     m_heuristicModel = m_heuristicEstimator.allModels[heuristicModel];
+    // }
+    // else
+    // {
+    //     throw std::runtime_error("doesn't support your mode");
+    // }
+    m_heuristicModel = Heuristic::HeuristicModel::DiagonalAltitude;
 }
 
 template <typename  T, typename P>
@@ -35,8 +45,13 @@ void AStar<T,P>::findShortestPath(SquareGridGraph<T, P>& graph,
     // for this one, we create a priority queue that contains the cell location as well as the minimum cost to reach this cell from source
     std::priority_queue<PQCell, std::vector<PQCell>, decltype(compare)> frontier(compare);
 
-    /// initialize all cells
+    // initialize all cells
     graph.initializeAllCells();
+    // reset member variables for a new path 
+    ShortestPath<T,P>::resetMemberVariables();
+
+    const double aveAltitude = computeAverageAltitudeInPath(source, target, elevation, overrides);
+    std::cout << "ave altitude: " << aveAltitude << std::endl;
 
     // get the source cell and put in PQ as start point
     auto& sourceCell = graph(source.Y(), source.X());
@@ -92,12 +107,9 @@ void AStar<T,P>::findShortestPath(SquareGridGraph<T, P>& graph,
                 // octile movement
                 cost = ShortestPath<T,P>::m_upHillCostEstimator->computeCost(current, elevation(current.Y(), current.X()), next, elevation(next.Y() , next.X()), Cost::CostModel::Octile);
             }
-            const auto dxBig = target.X() - current.Y();
-            const auto dyBig = target.X() - current.Y();
-            // cost += std::sqrt(dxBig * dxBig + dyBig * dyBig);
-            const double priority = 0.0;
-            // const double priority = std::abs(dxBig) + std::abs(dyBig);
-            // const double priority = std::sqrt(dxBig * dxBig + dyBig * dyBig);
+
+            const double priority = m_heuristicEstimator.computeHeuristic(current, target, m_heuristicModel, aveAltitude);
+            // std::cout << "priority: " << priority << std::endl;
             if (relax(currentCell, nextNode, cost))
                 frontier.push(std::make_pair(nextNode.getLoc(), nextNode.getWeight() + priority));
         }
@@ -105,7 +117,7 @@ void AStar<T,P>::findShortestPath(SquareGridGraph<T, P>& graph,
     }
     updatePath(graph, source, target);
     printSummary(source, target, graph(target).getWeight());
-    checkPath(graph, overrides, elevation);
+    checkPath(graph, overrides);
 }
 
 template <typename  T, typename P>
@@ -160,7 +172,7 @@ void AStar<T,P>::printSummary (const P& source, const P& target, const double co
 }
 
 template <typename  T, typename P>
-void AStar<T,P>::checkPath (SquareGridGraph<T, P>& graph, const Matrix<uint8_t>& overrides, const Matrix<uint8_t>& elevation)
+void AStar<T,P>::checkPath (SquareGridGraph<T, P>& graph, const Matrix<uint8_t>& overrides)
 {
     for (int i=0; i< graph.getGridSize(); i++)
     {
@@ -170,10 +182,52 @@ void AStar<T,P>::checkPath (SquareGridGraph<T, P>& graph, const Matrix<uint8_t>&
             if (graph(temp).getVisited() == true && overrides(temp.Y(), temp.X()) > 0)
             {
                 std::cout << "X: " << temp.X() << " y: " << temp.Y() << std::endl;
-                throw std::runtime_error(" HERE");
+                throw std::runtime_error("Find PATH in INELIGIBLE Point");
             }
         }
     }
+}
+
+template <typename  T, typename P>
+const double AStar<T,P>::computeAverageAltitudeInPath (const P& source, 
+                                                const P& target, 
+                                                const Matrix<uint8_t>& elevation, 
+                                                const Matrix<uint8_t>& overrides)
+{
+
+    // if (m_heuristicModel == m_heuristicEstimator.HeuristicModel::L1 ||  m_heuristicModel == m_heuristicEstimator.HeuristicModel::L2 || m_heuristicModel == m_heuristicEstimator.HeuristicModel::Diagonal)
+        // return 1.0;
+    // else
+    // {
+        const double step = std::min(std::abs(target.Y() - source.Y()), std::abs(target.X() - source.X()));
+
+        const int32_t minRow = target.Y() - source.Y();
+        const double rowStep = minRow / step;
+
+        const int32_t minCol = target.X() - source.X();
+        const double colStep = minCol / step;
+
+
+        uint32_t cnt = 0;
+        int32_t maximum = 0;
+        int32_t minimum = 300;
+        for(int i(0); i<=step; i++)
+        {
+            int32_t idy = source.Y() + rowStep * i;
+            int32_t idx = source.X() + colStep * i;
+            if (overrides(idy, idx) == 0)
+            {
+                // sum += elevation(idy, idx);
+                maximum = std::max(maximum, (int)elevation(idy, idx));
+                minimum = std::min(minimum, (int)elevation(idy, idx));
+                // std::cout << "ride: " << (int) overrides(idy, idx) <<  " elev: " << (int) elevation(idy, idx) <<  " s: " << sum << std::endl;
+                // std::cout << " s: " << sucharm << std::endl;
+                cnt ++;
+            }
+        }
+        const double minmax = maximum - minimum;
+        return  (minmax * 2 / cnt) + (cnt / (minmax * 2));
+    // }
 }
 
 

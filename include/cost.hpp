@@ -17,7 +17,8 @@
 /**
  * @brief Compute cost for up hill and down hill movements \n
  *   reference: http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html#heuristics-for-grid-maps \n
- *   reference: http://theory.stanford.edu/~amitp/GameProgramming/MovementCosts.html
+ *   reference: http://theory.stanford.edu/~amitp/GameProgramming/MovementCosts.html \n
+ *   reference: http://www.adammil.net/blog/v125_Roguelike_Vision_Algorithms.html
  * 
  */
 class Cost
@@ -37,7 +38,7 @@ public:
         L1           = 4,
         LInf         = 5,
         Angle        = 6,
-        DifficultyLevel = 7,
+        DifficultyLevel = 7
     };
 
     ///C'tor

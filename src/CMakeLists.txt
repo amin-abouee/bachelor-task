@@ -24,6 +24,7 @@ set(LIBRARY_SOURCES
     cost.cpp
     up_hill_cost.cpp
     down_hill_cost.cpp
+    heuristic.cpp
     )
 
 

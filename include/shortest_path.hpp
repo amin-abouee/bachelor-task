@@ -31,6 +31,10 @@
 /**
  * @brief Abstract class for finding the shortest path inside a grid graph
  * 
+ * reference: Introduction to algorithms, CLRS, chapter 24 \n
+ * reference: http://archive.ymsc.tsinghua.edu.cn/pacm_download/232/8897-10_paper_659.pdf \n
+ * reference: https://www.redblobgames.com/pathfinding/a-star/introduction.html
+ * 
  * @tparam T Template type name for cell content
  * @tparam P How to move in this grid graph
  */
@@ -78,6 +82,8 @@ public:
                             const Matrix<uint8_t>& overrides, 
                             const P& source, 
                             const P& target) = 0;
+
+    virtual void resetMemberVariables();
 
 protected:
     /// The number of cells that expanded by shortest path algorithms (good for evaluation and summery)

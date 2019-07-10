@@ -145,11 +145,14 @@ int main(int argc, char** argv)
     const nlohmann::json& SPPJsonNode = configFile[ "shortest_path_parameters" ];
     const auto upHillCostModel = SPPJsonNode["up_hill_cost_model"].get<std::string>();
     const auto downHillCostModel = SPPJsonNode["down_hill_cost_model"].get<std::string>();
+    const auto heuristicModel = SPPJsonNode["heuristic_model"].get<std::string>();
     std::cout << "Up Hill Model Name: " << upHillCostModel << std::endl;
     std::cout << "Down Hill Model Name: " << downHillCostModel << std::endl;
+    std::cout << "Heuristic Model Name: " << heuristicModel << std::endl;
+
 
     SquareGridGraph<CellData, CellLocation> graph(imageDimension, 8);
-    std::unique_ptr<ShortestPath<CellData, CellLocation>> shortestPath = std::make_unique<AStar<CellData, CellLocation>>(downHillCostModel, upHillCostModel);
+    std::unique_ptr<ShortestPath<CellData, CellLocation>> shortestPath = std::make_unique<AStar<CellData, CellLocation>>(downHillCostModel, upHillCostModel, heuristicModel);
     shortestPath->findShortestPath(graph, elevation, overrides, roverLoc, bachelorLoc);
     shortestPath->findShortestPath(graph, elevation, overrides, bachelorLoc, weddingLoc);
 
@@ -182,7 +185,6 @@ int main(int argc, char** argv)
 
         if (graph(y, x).getPath() == true)
         {
-            // std::cout << "X: " << x << " Y: " << y << std::endl;
             return uint8_t(visualizer::IPV_PATH);
         }
         

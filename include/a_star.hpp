@@ -26,6 +26,7 @@
 #include <vector>
 #include "square_grid_graph.hpp"
 #include "shortest_path.hpp"
+#include "heuristic.hpp"
 
 /**
  * @brief A* implementation for different heuristic and cost function model \n
@@ -44,7 +45,7 @@ public:
     explicit AStar();
     
     /// C'tor
-    explicit AStar(const std::string& downHillCostModel, const std::string& upHillCostModel);
+    explicit AStar(const std::string& downHillCostModel, const std::string& upHillCostModel, const std::string& heuristicModel);
 
     /// D'tor
     virtual ~AStar() = default;
@@ -113,7 +114,15 @@ private:
      * @param overrides 
      * @param elevation 
      */
-    void checkPath (SquareGridGraph<T, P>& graph, const Matrix<uint8_t>& overrides, const Matrix<uint8_t>& elevation);
+    void checkPath (SquareGridGraph<T, P>& graph, const Matrix<uint8_t>& overrides);
+
+    const double computeAverageAltitudeInPath (const P& source, 
+                                                const P& target, 
+                                                const Matrix<uint8_t>& elevation, 
+                                                const Matrix<uint8_t>& overrides);
+
+    Heuristic m_heuristicEstimator;
+    Heuristic::HeuristicModel m_heuristicModel;
 };
 
 #endif /* __A_STAR_H__ */
