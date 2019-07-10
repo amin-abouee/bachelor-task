@@ -25,12 +25,12 @@ First of all, you need to set the config.json parameters.
     * down_hill_cost_model (string): model for down hill cost estimation (more information in Cost class)
     * heuristic_model (string): model for A* heuristic model (more information in Heuristic class)
 
-Cmake and make generate the executable files in ../bin/{type_of_build}/ folders
-'''
+Cmake generates the executable files in **./bin/{type_of_build}/** folders
+```
 build> ../bin/release/bachelor ../config/config.json
-'''
+```
 
 ## Run test
-'''
+```
 build> ../bin/release/bachelor_test
-'''
+```
