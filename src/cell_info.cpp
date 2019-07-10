@@ -42,6 +42,11 @@ bool CellLocation::operator==(const CellLocation& other) const
     return (other.X() == m_x && other.Y() == m_y);
 }
 
+bool CellLocation::operator!=(const CellLocation& other) const
+{
+    return (other.X() != m_x || other.Y() != m_y);
+}
+
 int CellLocation::X() const
 {
     return m_x;

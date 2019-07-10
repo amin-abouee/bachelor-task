@@ -15,6 +15,7 @@
 #include "square_grid_graph.hpp"
 #include "shortest_path.hpp"
 #include "a_star.hpp"
+#include "bidirectional_search.hpp"
 
 #ifdef _MSC_VER
 static const char* PATH_SEP = "\\";
@@ -30,19 +31,6 @@ enum OverrideFlags
     OF_WATER_BASIN = 0x40
 };
 
-// Some constants
-// enum
-// {
-//     IMAGE_DIM = 2048, // Width and height of the elevation and overrides image
-    
-//     ROVER_X = 159,
-//     ROVER_Y = 1520,
-//     BACHELOR_X = 1303,
-//     BACHELOR_Y = 85,
-//     WEDDING_X = 1577,
-//     WEDDING_Y = 1294
-// };
-
 std::ifstream::pos_type fileSize(const std::string& filename)
 {
     std::ifstream in(filename, std::ifstream::ate | std::ifstream::binary);
@@ -52,25 +40,6 @@ std::ifstream::pos_type fileSize(const std::string& filename)
     }
     return in.tellg();
 }
-
-// std::vector<uint8_t> loadFile(const std::string& filename, const uint32_t expectedFileSize)
-// {
-//     // std::cout << "filename: " << filename << std::endl;
-//     // std::cout << "expected File Size: " << expectedFileSize << std::endl;
-//     const std::size_t fsize = fileSize(filename);
-//     if (fsize != expectedFileSize)
-//     {
-//         throw std::exception();
-//     }
-//     std::vector<uint8_t> data(fsize, 0);
-//     std::ifstream ifile(filename, std::ifstream::binary);
-//     if (!ifile.good())
-//     {
-//         throw std::exception();
-//     }
-//     ifile.read((char*)&data[0], fsize);
-//     return data;
-// }
 
 void loadFile(const std::string& filename, Matrix<uint8_t>& mat)
 {
@@ -99,37 +68,57 @@ bool donut(int x, int y, int x1, int y1)
 
 int main(int argc, char** argv)
 {
+    // argv[1] : config json file, default path: ../config/config.json
+    if (argc == 1)
+        throw std::runtime_error("You need to set the path of config file. If you don't how to do that, read README.md");
 
     std::ifstream fileReader( argv[1] );
     // const nlohmann::json configFile = nlohmann::json::parse( fileReader );
     nlohmann::json configFile;
     fileReader >> configFile;
-    const nlohmann::json& filePathsJsonNode = configFile[ "file_paths" ];
 
+    // Read assets files
+    const nlohmann::json& filePathsJsonNode = configFile[ "file_paths" ];
     const auto elevationFilepath = filePathsJsonNode[ "elevation_filepath" ].get< std::string >();
     const auto overridesFilepath = filePathsJsonNode[ "overrides_filepath" ].get< std::string >();
 
+    // Read constraints parameters
     const nlohmann::json& constraintsJsonNode = configFile[ "constraints" ];
     const uint32_t imageDimension = constraintsJsonNode["image_dimension"].get<int32_t>();
-    std::cout << "Image Dimension: " << imageDimension << std::endl;
+    
+    // Reading the input locations
     const auto roverLocPair = constraintsJsonNode["rover_loc"].get<std::pair<int32_t, int32_t>>();
     const auto bachelorLocPair = constraintsJsonNode["bachelor_loc"].get<std::pair<int32_t, int32_t>>();
     const auto weddingLocPair = constraintsJsonNode["wedding_loc"].get<std::pair<int32_t, int32_t>>();
+
     CellLocation roverLoc {roverLocPair.first, roverLocPair.second};
     CellLocation bachelorLoc {bachelorLocPair.first, bachelorLocPair.second};
     CellLocation weddingLoc {weddingLocPair.first, weddingLocPair.second};
 
+    std::cout << "Image Dimension: " << imageDimension << std::endl;
     std::cout << "Rover Location: [ "<< roverLoc.X() << " , " << roverLoc.Y() << "]" << std::endl;
     std::cout << "Bachelor Location: [ " << bachelorLoc.X() << " , " << bachelorLoc.Y() << "]" << std::endl;
     std::cout << "Wedding Location: [ " << weddingLoc.X() << " , " << weddingLoc.Y() << "]" << std::endl;
 
+    // Create map for elevation and overrides
     Matrix<uint8_t> elevation{imageDimension, imageDimension};
     Matrix<uint8_t> overrides{imageDimension, imageDimension};
 
+    // Loading the elevation and overrides map
     loadFile(elevationFilepath, elevation);
     loadFile(overridesFilepath, overrides);
 
+    // Check eligibility of input data based on definition 
+    if (elevation(roverLoc.Y(), roverLoc.X()) == 0 || overrides(roverLoc.Y(), roverLoc.X()))
+        throw std::runtime_error("Regarding to the definition of question, you can not set the rover point in water");
 
+    if (elevation(bachelorLoc.Y(), bachelorLoc.X()) == 0 || overrides(bachelorLoc.Y(), bachelorLoc.X()))
+        throw std::runtime_error("Regarding to the definition of question, you can not set the bachelor point in water");
+
+    if (elevation(weddingLoc.Y(), weddingLoc.X()) == 0 || overrides(weddingLoc.Y(), weddingLoc.X()))
+        throw std::runtime_error("Regarding to the definition of question, you can not set the wedding point in water");
+
+    // Read cost and heuristic models configuration
     const nlohmann::json& SPPJsonNode = configFile[ "shortest_path_parameters" ];
     const auto upHillCostModel = SPPJsonNode["up_hill_cost_model"].get<std::string>();
     const auto downHillCostModel = SPPJsonNode["down_hill_cost_model"].get<std::string>();
@@ -141,11 +130,11 @@ int main(int argc, char** argv)
 
     SquareGridGraph<CellData, CellLocation> graph(imageDimension, 8);
     std::unique_ptr<ShortestPath<CellData, CellLocation>> shortestPath = std::make_unique<AStar<CellData, CellLocation>>(downHillCostModel, upHillCostModel, heuristicModel);
+    // std::unique_ptr<ShortestPath<CellData, CellLocation>> shortestPath = std::make_unique<BidirectionalSearch<CellData, CellLocation>>(downHillCostModel, upHillCostModel, heuristicModel);
     shortestPath->findShortestPath(graph, elevation, overrides, roverLoc, bachelorLoc);
     shortestPath->findShortestPath(graph, elevation, overrides, bachelorLoc, weddingLoc);
 
     std::ofstream of("pic.bmp", std::ofstream::binary);
-
     auto pixelFilter = [&graph, &overrides, &imageDimension, &roverLoc, &bachelorLoc, &weddingLoc] (size_t x, size_t y, uint8_t elevation) 
     {
         // Marks interesting positions on the map
@@ -156,6 +145,7 @@ int main(int argc, char** argv)
             return uint8_t(visualizer::IPV_PATH);
         }
 
+        // Draw path
         if (graph(y, x).getPath() == true)
         {
             return uint8_t(visualizer::IPV_PATH);

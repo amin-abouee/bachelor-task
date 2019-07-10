@@ -50,6 +50,9 @@ public:
      */
     bool operator==(const CellLocation& other) const;
 
+    bool operator!=(const CellLocation& other) const;
+
+
     // void setLoc(const int32_t x, conat int32_t y);
 
     /**
