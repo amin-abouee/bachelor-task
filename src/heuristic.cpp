@@ -4,25 +4,15 @@
 
 Heuristic::Heuristic()
 {
-    allModels["dijkstra"] = Heuristic::HeuristicModel::Dijkstra;
-    allModels["l1"] = Heuristic::HeuristicModel::L1;
-    allModels["l2"] = Heuristic::HeuristicModel::L2;
-    allModels["diagonal"] = Heuristic::HeuristicModel::Diagonal;
-    allModels["l1-altitude"] = Heuristic::HeuristicModel::L1Altitude;
-    allModels["l2-altitude"] = Heuristic::HeuristicModel::L2Altitude;
-    allModels["diagonal-altitude"] = Heuristic::HeuristicModel::DiagonalAltitude;
-    // allModels["theta-star"] = Heuristic::HeuristicModel::ThetaStar;
-
-    // {
-    //     std::make_pair( "dijkstra", Heuristic::HeuristicModel::Dijkstra ),
-    //     std::make_pair( "l1", Heuristic::HeuristicModel::L1 ),
-    //     std::make_pair( "l2", Heuristic::HeuristicModel::L2 ),
-    //     std::make_pair( "diagonal", Heuristic::HeuristicModel::Diagonal ),
-    //     std::make_pair( "l1-altitude", Heuristic::HeuristicModel::L1Altitude ),
-    //     std::make_pair( "l2-altitude", Heuristic::HeuristicModel::L2Altitude ),
-    //     std::make_pair( "diagonal-altitude", Heuristic::HeuristicModel::DiagonalAltitude ),
-    //     std::make_pair( "theta-star", Heuristic::HeuristicModel::ThetaStar )
-    // };
+    allModels = {
+        std::make_pair( "dijkstra", Heuristic::HeuristicModel::Dijkstra ),
+        std::make_pair( "l1", Heuristic::HeuristicModel::L1 ),
+        std::make_pair( "l2", Heuristic::HeuristicModel::L2 ),
+        std::make_pair( "diagonal", Heuristic::HeuristicModel::Diagonal ),
+        std::make_pair( "l1-altitude", Heuristic::HeuristicModel::L1Altitude ),
+        std::make_pair( "l2-altitude", Heuristic::HeuristicModel::L2Altitude ),
+        std::make_pair( "diagonal-altitude", Heuristic::HeuristicModel::DiagonalAltitude )
+    };
 }
 
 double Heuristic::computeHeuristic(const CellLocation& source, 

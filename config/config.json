@@ -15,6 +15,6 @@
     {
         "up_hill_cost_model" : "l2",
         "down_hill_cost_model" : "l2",
-        "heuristic_model" : "dijkstra"
+        "heuristic_model" : "diagonal"
     }
 }
