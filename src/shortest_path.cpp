@@ -31,7 +31,7 @@ ShortestPath<T,P>::ShortestPath(const std::string& downHillCostModel, const std:
     }
     else
     {
-        throw std::runtime_error("doesn't support your mode");
+        throw std::runtime_error("Your model does not define. Possible option: octile, peak, mean-peak, l2, l1, linf, angle, dificulty-level, l2-trimm");
     }
 
     it = Cost::allModels.find(upHillCostModel);
@@ -41,7 +41,7 @@ ShortestPath<T,P>::ShortestPath(const std::string& downHillCostModel, const std:
     }
     else
     {
-        throw std::runtime_error("doesn't support your mode");
+        throw std::runtime_error("Your model does not define. Possible option: octile, peak, mean-peak, l2, l1, linf, angle, dificulty-level, l2-trimm");        
     }
 }
 

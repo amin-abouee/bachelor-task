@@ -12,7 +12,8 @@ std::map< std::string, Cost::CostModel > Cost::allModels
   std::make_pair( "l1", Cost::CostModel::L1 ),
   std::make_pair( "linf", Cost::CostModel::LInf ),
   std::make_pair( "angle", Cost::CostModel::Angle ),
-  std::make_pair( "dificulty-level", Cost::CostModel::DifficultyLevel )
+  std::make_pair( "dificulty-level", Cost::CostModel::DifficultyLevel ),
+  std::make_pair( "l2-trimm", Cost::CostModel::L2Trimm )
 };
 
 double Cost::computeCost(const CellLocation& source, 
@@ -25,28 +26,30 @@ double Cost::computeCost(const CellLocation& source,
     {
         case CostModel::Octile:
             return computeOctile( source, elevationSource, target, elevationTarget );
-            // break;
+
         case CostModel::Peak:
             return computePeak( source, elevationSource, target, elevationTarget );
 
         case CostModel::MeanPeak:
             return computeMeanPeak( source, elevationSource, target, elevationTarget );
-            // break;
+
         case CostModel::L2:
             return computeL2( source, elevationSource, target, elevationTarget );
-            // break;
+            
         case CostModel::L1:
             return computeL1( source, elevationSource, target, elevationTarget );
-            // break;
+            
         case CostModel::LInf:
             return computeLInf( source, elevationSource, target, elevationTarget );
-            // break;
+            
         case CostModel::Angle:
             return computeAngle( source, elevationSource, target, elevationTarget );
-            // break;
+            
         case CostModel::DifficultyLevel:
             return computeDifficultyLevel( source, elevationSource, target, elevationTarget );
-            // break;
+
+        case CostModel::L2Trimm:
+            return computeL2Trimm( source, elevationSource, target, elevationTarget );
     }
 }
 

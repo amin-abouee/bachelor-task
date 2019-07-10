@@ -15,7 +15,6 @@
 #include "square_grid_graph.hpp"
 #include "shortest_path.hpp"
 #include "a_star.hpp"
-#include "bidirectional_search.hpp"
 
 #ifdef _MSC_VER
 static const char* PATH_SEP = "\\";
@@ -96,9 +95,9 @@ int main(int argc, char** argv)
     CellLocation weddingLoc {weddingLocPair.first, weddingLocPair.second};
 
     std::cout << "Image Dimension: " << imageDimension << std::endl;
-    std::cout << "Rover Location: [ "<< roverLoc.X() << " , " << roverLoc.Y() << "]" << std::endl;
-    std::cout << "Bachelor Location: [ " << bachelorLoc.X() << " , " << bachelorLoc.Y() << "]" << std::endl;
-    std::cout << "Wedding Location: [ " << weddingLoc.X() << " , " << weddingLoc.Y() << "]" << std::endl;
+    std::cout << "Rover Location: "<< roverLoc << std::endl;
+    std::cout << "Bachelor Location: " << bachelorLoc << std::endl;
+    std::cout << "Wedding Location: " << weddingLoc << std::endl;
 
     // Create map for elevation and overrides
     Matrix<uint8_t> elevation{imageDimension, imageDimension};
@@ -130,7 +129,6 @@ int main(int argc, char** argv)
 
     SquareGridGraph<CellData, CellLocation> graph(imageDimension, 8);
     std::unique_ptr<ShortestPath<CellData, CellLocation>> shortestPath = std::make_unique<AStar<CellData, CellLocation>>(downHillCostModel, upHillCostModel, heuristicModel);
-    // std::unique_ptr<ShortestPath<CellData, CellLocation>> shortestPath = std::make_unique<BidirectionalSearch<CellData, CellLocation>>(downHillCostModel, upHillCostModel, heuristicModel);
     shortestPath->findShortestPath(graph, elevation, overrides, roverLoc, bachelorLoc);
     shortestPath->findShortestPath(graph, elevation, overrides, bachelorLoc, weddingLoc);
 

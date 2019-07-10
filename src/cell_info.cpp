@@ -67,6 +67,11 @@ void CellLocation::setY(const int32_t y)
     m_y = y;
 }
 
+std::ostream& operator<<( std::ostream& os, CellLocation& loc)
+{
+    os << "[" << loc.X() << " , " << loc.Y()<< "] ";
+    return os; 
+}
 
 CellData::CellData() : m_parent(nullptr), m_loc(0, 0), m_weight(std::numeric_limits<double>::max()), m_visited(false), m_path(false)
 {
@@ -78,7 +83,6 @@ CellData::CellData(const CellLocation loc, const double weight, const bool visit
 
 }
 
-//Copy C'tor
 CellData::CellData(const CellData& rhs)
 {
     // parent = rhs.getParent();
@@ -88,7 +92,6 @@ CellData::CellData(const CellData& rhs)
     m_path = rhs.getPath();
 }
 
-//move C'tor
 CellData::CellData(CellData&& rhs)
 {
     m_parent = (std::move(rhs.getParent()));
@@ -98,7 +101,6 @@ CellData::CellData(CellData&& rhs)
     m_path = (std::move(rhs.getPath()));
 }
 
-//Copy assignment operator
 CellData& CellData::operator=(const CellData& rhs)
 {
     m_parent = rhs.getParent();
@@ -109,7 +111,6 @@ CellData& CellData::operator=(const CellData& rhs)
     return *this;
 }
 
-//move assignment operator
 CellData& CellData::operator=(CellData&& rhs)
 {
     m_parent = (std::move(rhs.getParent()));
@@ -126,7 +127,6 @@ void CellData::initialize()
     m_parent = nullptr;
     m_weight = std::numeric_limits<double>::max();
     m_visited = false;
-    // path = false;
 }
 
 void CellData::setLoc(const int32_t _x, const int32_t _y)
@@ -188,4 +188,10 @@ void CellData::setVisited(const bool visited)
 void CellData::setPath(const bool path)
 {
     m_path = path;
+}
+
+std::ostream& operator<<( std::ostream& os, CellData& data)
+{
+    os << std::boolalpha << "Loc: " << data.getLoc() << ", Weight: " << data.getWeight() << ", Vis: " << data.getVisited() << ", Path: " << data.getPath();
+    return os; 
 }

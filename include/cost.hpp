@@ -38,7 +38,8 @@ public:
         L1           = 4,
         LInf         = 5,
         Angle        = 6,
-        DifficultyLevel = 7
+        DifficultyLevel = 7,
+        L2Trimm      = 8
     };
 
     ///C'tor
@@ -165,7 +166,7 @@ virtual double computeLInf( const CellLocation& source,
                             const uint8_t elevationTarget ) = 0; 
 
 /**
- * @brief instead of euclidean distance, apply a ratio of angle between source and target
+ * @brief Instead of euclidean distance, apply a ratio of angle between source and target
  * 
  * @param source 
  * @param elevationSource 
@@ -179,7 +180,7 @@ virtual double computeAngle( const CellLocation& source,
                             const uint8_t elevationTarget ) = 0; 
 
 /**
- * @brief consider the effect of angle and euclidean distance between source and target
+ * @brief Consider the effect of angle and euclidean distance between source and target
  * 
  * @param source 
  * @param elevationSource 
@@ -190,9 +191,22 @@ virtual double computeAngle( const CellLocation& source,
 virtual double computeDifficultyLevel( const CellLocation& source, 
                             const uint8_t elevationSource, 
                             const CellLocation& target, 
-                            const uint8_t elevationTarget ) = 0; 
+                            const uint8_t elevationTarget ) = 0;
 
+/**
+ * @brief Compute L2 norm from source to target if angle is less than 60
+ * 
+ * @param source 
+ * @param elevationSource 
+ * @param target 
+ * @param elevationTarget 
+ * @return double angle(source, target) / 15 * norm L2
+ */
+virtual double computeL2Trimm( const CellLocation& source, 
+                            const uint8_t elevationSource, 
+                            const CellLocation& target, 
+                            const uint8_t elevationTarget ) = 0;
 
- };
+};
 
  #endif /* __COST_H__ */

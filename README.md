@@ -21,11 +21,11 @@ First of all, you need to set the config.json parameters.
     * bachelor_loc ([int, int]): Location of bachelor party (You can not set it in water or elevation 0)
     * wedding_loc ([int, int]): Location of wedding party (You can not set it in water or elevation 0)
 * shortest_path_parameters
-    * up_hill_cost_model (string): model for up hill cost estimation (more information in Cost class)
-    * down_hill_cost_model (string): model for down hill cost estimation (more information in Cost class)
-    * heuristic_model (string): model for A* heuristic model (more information in Heuristic class)
+    * up_hill_cost_model (string): model for up hill cost estimation (["octile, peak, mean-peak, l2, l1, linf, angle, dificulty-level, l2-trimm"] -> Cost class)
+    * down_hill_cost_model (string): model for down hill cost estimation (["octile, peak, mean-peak, l2, l1, linf, angle, dificulty-level, l2-trimm"] -> Cost class)
+    * heuristic_model (string): A* heuristic model (["dijkstra, l1, l2, diagonal, l1-altitude, l2-altitude, diagonal-altitude"] -> Heuristic class)
 
-Cmake generates the executable files in **./bin/{type_of_build}/** folders
+Cmake generates the executable files in **../bin/{type_of_build}/** folders
 ```
 build> ../bin/release/bachelor ../config/config.json
 ```

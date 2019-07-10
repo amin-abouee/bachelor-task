@@ -83,6 +83,9 @@ public:
      */
     void setY(const int32_t y);
 
+
+    friend std::ostream& operator<<( std::ostream& os, CellLocation& loc);
+
 private:
     /// for two reason we need int32_t and not uint32_t
     /// 1: represents movements that has -1 for x and y directions
@@ -214,6 +217,9 @@ public:
      * @param path 
      */
     void setPath(const bool path);
+
+    friend std::ostream& operator<<( std::ostream& os, CellData& loc);
+
 
 private:
     /// Pointer to parent cell

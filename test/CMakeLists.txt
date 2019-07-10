@@ -5,9 +5,7 @@ set(CMAKE_RELEASE_DIR "${CMAKE_SOURCE_DIR}/bin/release")
 set(CMAKE_DEBUG_DIR "${CMAKE_SOURCE_DIR}/bin/debug")
 
 enable_testing()
-find_package(GTest REQUIRED)
-# include(GoogleTest)
-# include_directories(${GTEST_INCLUDE_DIRS})
+# find_package(GTest REQUIRED)
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 add_executable(bachelor_test test.cpp)

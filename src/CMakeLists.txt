@@ -7,6 +7,7 @@ set(CMAKE_DEBUG_DIR "${CMAKE_SOURCE_DIR}/bin/debug")
 find_package(Doxygen)
 option(BUILD_DOC "Build documentation" OFF)
 
+
 include_directories(${CMAKE_SOURCE_DIR}/visualizer/include
                     ${CMAKE_SOURCE_DIR}/include
                     ${CMAKE_SOURCE_DIR}/3rd-library)
@@ -21,7 +22,6 @@ set(LIBRARY_SOURCES
     square_grid_graph.cpp
     shortest_path.cpp
     a_star.cpp
-    bidirectional_search.cpp
     cost.cpp
     up_hill_cost.cpp
     down_hill_cost.cpp
@@ -66,6 +66,4 @@ if (BUILD_DOC)
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         COMMENT "Generating HTML Documentation with Doxygen"
         VERBATIM )
-# else (DOXYGEN_FOUND)
-#   message("Doxygen need to be installed to generate the doxygen documentation")
 endif (BUILD_DOC)

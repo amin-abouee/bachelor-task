@@ -108,6 +108,20 @@ public:
                                 const CellLocation& target, 
                                 const uint8_t elevationTarget ); 
 
+    /**
+     * @brief Compute L2 norm from source to target if angle is less than 60
+     * 
+     * @param source 
+     * @param elevationSource 
+     * @param target 
+     * @param elevationTarget 
+     * @return double norm2 if angle is less than 60
+     */
+    double computeL2Trimm( const CellLocation& source, 
+                            const uint8_t elevationSource, 
+                            const CellLocation& target, 
+                            const uint8_t elevationTarget );
+
  };
 
  #endif /* __UP_HILL_COST_H__ */

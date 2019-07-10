@@ -23,9 +23,8 @@ AStar<T,P>::AStar(const std::string& downHillCostModel, const std::string& upHil
     }
     else
     {
-        throw std::runtime_error("doesn't support your heuristic model");
+        throw std::runtime_error("Your model does not define. Possible option: dijkstra, l1, l2, diagonal, l1-altitude, l2-altitude, diagonal-altitude");
     }
-    // m_heuristicModel = Heuristic::HeuristicModel::DiagonalAltitude;
 }
 
 template <typename  T, typename P>
@@ -71,11 +70,11 @@ void AStar<T,P>::findShortestPath(SquareGridGraph<T, P>& graph,
         // increase expended nodes by 1
         ShortestPath<T, P>::m_cntExpandedCells++;
 
-        if (currentCell.getVisited() == true)
-        {
-            continue;
-            std::cout << "WARNING " << std::endl;
-        }
+        // if (currentCell.getVisited() == true)
+        // {
+        //     continue;
+        //     std::cout << "WARNING " << std::endl;
+        // }
 
         // if current expantion node == target, we find the shortest path. ENTRY EXIT!
         if (currentCell.getLoc() == target) 
@@ -118,7 +117,7 @@ void AStar<T,P>::findShortestPath(SquareGridGraph<T, P>& graph,
     }
     updatePath(graph, source, target);
     printSummary(source, target, graph(target).getWeight());
-    checkPath(graph, overrides);
+    // checkPath(graph, overrides);
 }
 
 template <typename  T, typename P>
@@ -172,22 +171,22 @@ void AStar<T,P>::printSummary (const P& source, const P& target, const double co
     std::cout << std::endl;
 }
 
-template <typename  T, typename P>
-void AStar<T,P>::checkPath (SquareGridGraph<T, P>& graph, const Matrix<uint8_t>& overrides)
-{
-    for (int i=0; i< graph.getGridSize(); i++)
-    {
-        for (int j=0; j<graph.getGridSize(); j++)
-        {
-            P temp {j , i};
-            if (graph(temp).getVisited() == true && overrides(temp.Y(), temp.X()) > 0)
-            {
-                std::cout << "X: " << temp.X() << " y: " << temp.Y() << std::endl;
-                throw std::runtime_error("Find PATH in INELIGIBLE Point");
-            }
-        }
-    }
-}
+// template <typename  T, typename P>
+// void AStar<T,P>::checkPath (SquareGridGraph<T, P>& graph, const Matrix<uint8_t>& overrides)
+// {
+//     for (int i=0; i< graph.getGridSize(); i++)
+//     {
+//         for (int j=0; j<graph.getGridSize(); j++)
+//         {
+//             P temp {j , i};
+//             if (graph(temp).getVisited() == true && overrides(temp.Y(), temp.X()) > 0)
+//             {
+//                 std::cout << "X: " << temp.X() << " y: " << temp.Y() << std::endl;
+//                 throw std::runtime_error("Find PATH in INELIGIBLE Point");
+//             }
+//         }
+//     }
+// }
 
 template <typename  T, typename P>
 const double AStar<T,P>::computeAverageAltitudeInPath (const P& source, 
@@ -200,8 +199,10 @@ const double AStar<T,P>::computeAverageAltitudeInPath (const P& source,
         return 1.0;
     else
     {
+        // Find min between width and height from source to target
         const double step = std::min(std::abs(target.Y() - source.Y()), std::abs(target.X() - source.X()));
 
+        // find row step and col step 
         const int32_t minRow = target.Y() - source.Y();
         const double rowStep = minRow / step;
 
@@ -209,6 +210,8 @@ const double AStar<T,P>::computeAverageAltitudeInPath (const P& source,
         const double colStep = minCol / step;
 
 
+        // find minimun and maximum elevation from source and target
+        // create a line of slight from source to target
         uint32_t cnt = 0;
         int32_t maximum = 0;
         int32_t minimum = 300;
@@ -218,15 +221,13 @@ const double AStar<T,P>::computeAverageAltitudeInPath (const P& source,
             int32_t idx = source.X() + colStep * i;
             if (overrides(idy, idx) == 0)
             {
-                // sum += elevation(idy, idx);
                 maximum = std::max(maximum, (int)elevation(idy, idx));
                 minimum = std::min(minimum, (int)elevation(idy, idx));
-                // std::cout << "ride: " << (int) overrides(idy, idx) <<  " elev: " << (int) elevation(idy, idx) <<  " s: " << sum << std::endl;
-                // std::cout << " s: " << sucharm << std::endl;
                 cnt ++;
             }
-        }
+        }   
         const double minmax = maximum - minimum;
+        // average of altitude for uphill and down hill movements
         return  (minmax * 2 / cnt) + (cnt / (minmax * 2));
     }
 }

@@ -62,7 +62,7 @@ public:
     std::map< std::string, HeuristicModel > allModels;
 
     /**
-     * @brief estimate heuristic from source to target cell based on selected model
+     * @brief Estimate heuristic from source to target cell based on selected model
      * 
      * @param source 
      * @param elevationSource 
@@ -76,31 +76,63 @@ public:
                                 const HeuristicModel& model,
                                 const double aveAltitude );
 
+    /**
+     * @brief Compute dijkstra algorithm (brute force search)
+     * 
+     * @param source 
+     * @param target 
+     * @param model 
+     * @param aveAltitude 
+     * @return 0
+     */
     double computeDijkstra( const CellLocation& source, 
                         const CellLocation& target, 
                         const HeuristicModel& model,
                         const double aveAltitude );
     
+    /**
+     * @brief Compute manhattan distance between source and target
+     * 
+     * @param source 
+     * @param target 
+     * @param model 
+     * @param aveAltitude 
+     * @return abs(dx) + abs(dy)
+     */
     double computeL1( const CellLocation& source, 
                         const CellLocation& target, 
                         const HeuristicModel& model ,
                         const double aveAltitude); 
 
+    /**
+     * @brief Compute euclidean distance between source and target
+     * 
+     * @param source 
+     * @param target 
+     * @param model 
+     * @param aveAltitude 
+     * @return sqrt( dx^2 + dy^2 + dz^2)
+     */
     double computeL2( const CellLocation& source, 
                         const CellLocation& target, 
                         const HeuristicModel& model ,
                         const double aveAltitude); 
 
+    /**
+     * @brief Compute euclidean distance between source and target
+     * 
+     * @param source 
+     * @param target 
+     * @param model 
+     * @param aveAltitude 
+     * @return max(dx, dy) + (sqrt(2)-1) * min(dx, dy)
+     */
     double computeDiagonal( const CellLocation& source, 
                         const CellLocation& target, 
                         const HeuristicModel& model ,
                         const double aveAltitude);
 
 private:
-    // double computeAverageAltitude(const CellLocation& source, 
-    //                     const CellLocation& target, 
-    //                     ;
-
 };
 
  #endif /* __HEURISTIC_H__ */
