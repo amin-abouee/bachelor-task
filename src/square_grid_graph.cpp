@@ -61,12 +61,12 @@ T & SquareGridGraph<T,P>::operator()(const P& location)
 }
 
 template <typename  T, typename P>
-void SquareGridGraph<T,P>::findNeighbours(const P& source, const Matrix<uint8_t>& overrides,  std::vector<P>& neighbours)
+void SquareGridGraph<T,P>::findNeighbours(const P& source, const Matrix<uint8_t>& overrides, const Matrix<uint8_t>& elevation, std::vector<P>& neighbours)
 {
     for (auto& dir : movements) 
     {
         P next{source.X() + dir.X(), source.Y() + dir.Y()};
-        if (inBounds(next) && isAccessible(next, overrides) )
+        if (inBounds(next) && isAccessible(next, overrides, elevation) )
         {
             neighbours.push_back(next);
         }
@@ -94,9 +94,9 @@ bool SquareGridGraph<T,P>::inBounds(const P& location)
 }
 
 template <typename  T, typename P>
-bool SquareGridGraph<T,P>::isAccessible (const P& cell, const Matrix<uint8_t>& overrides)
+bool SquareGridGraph<T,P>::isAccessible (const P& cell, const Matrix<uint8_t>& overrides, const Matrix<uint8_t>& elevation)
 {
-    if (overrides(cell.Y(), cell.X()) == 0 && m_graphData->operator()(cell.Y(), cell.X()).getVisited() == false)
+    if (overrides(cell.Y(), cell.X()) == 0 && elevation(cell.Y(), cell.X()) > 0 && m_graphData->operator()(cell.Y(), cell.X()).getVisited() == false)
         return true;
     else
         return false;

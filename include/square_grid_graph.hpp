@@ -107,7 +107,7 @@ public:
      * @param overrides matrix contains the eligible and ineligible cells
      * @param neighbours vector of cells
      */
-    void findNeighbours(const P& source, const Matrix<uint8_t>& overrides, std::vector<P>& neighbours);
+    void findNeighbours(const P& source, const Matrix<uint8_t>& overrides, const Matrix<uint8_t>& elevation, std::vector<P>& neighbours);
 
 
     int32_t getGridSize () const;
@@ -124,7 +124,7 @@ private:
      */
     bool inBounds(const P& location);
 
-    bool isAccessible (const P& cell, const Matrix<uint8_t>& overrides);
+    bool isAccessible (const P& cell, const Matrix<uint8_t>& overrides, const Matrix<uint8_t>& elevation);
 
     /// size of grid (rows * cols)
     int32_t m_gridSize;

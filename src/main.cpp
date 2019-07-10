@@ -111,7 +111,7 @@ int main(int argc, char** argv)
 
     const nlohmann::json& constraintsJsonNode = configFile[ "constraints" ];
     const uint32_t imageDimension = constraintsJsonNode["image_dimension"].get<int32_t>();
-    std::cout << "image dimension: " << imageDimension << std::endl;
+    std::cout << "Image Dimension: " << imageDimension << std::endl;
     const auto roverLocPair = constraintsJsonNode["rover_loc"].get<std::pair<int32_t, int32_t>>();
     const auto bachelorLocPair = constraintsJsonNode["bachelor_loc"].get<std::pair<int32_t, int32_t>>();
     const auto weddingLocPair = constraintsJsonNode["wedding_loc"].get<std::pair<int32_t, int32_t>>();
@@ -126,18 +126,6 @@ int main(int argc, char** argv)
     Matrix<uint8_t> elevation{imageDimension, imageDimension};
     Matrix<uint8_t> overrides{imageDimension, imageDimension};
 
-
-    // const uint32_t expectedFileSize = imageDimension * imageDimension;
-    // Address assets relative to application location
-    // std::string anchor = std::string(".") + PATH_SEP;
-    // std::string pname = argv[0];
-    // auto lastpos = pname.find_last_of("/\\");
-    // if (lastpos != std::string::npos)
-    // {
-    //     anchor = pname.substr(0, lastpos) + PATH_SEP;
-    // }
-    // std::cout << "anchor: " << anchor << std::endl;
-
     loadFile(elevationFilepath, elevation);
     loadFile(overridesFilepath, overrides);
 
@@ -146,9 +134,9 @@ int main(int argc, char** argv)
     const auto upHillCostModel = SPPJsonNode["up_hill_cost_model"].get<std::string>();
     const auto downHillCostModel = SPPJsonNode["down_hill_cost_model"].get<std::string>();
     const auto heuristicModel = SPPJsonNode["heuristic_model"].get<std::string>();
-    std::cout << "Up Hill Model Name: " << upHillCostModel << std::endl;
-    std::cout << "Down Hill Model Name: " << downHillCostModel << std::endl;
-    std::cout << "Heuristic Model Name: " << heuristicModel << std::endl;
+    std::cout << "Up Hill Model: " << upHillCostModel << std::endl;
+    std::cout << "Down Hill Model: " << downHillCostModel << std::endl;
+    std::cout << "Heuristic Model: " << heuristicModel << std::endl;
 
 
     SquareGridGraph<CellData, CellLocation> graph(imageDimension, 8);
@@ -156,22 +144,7 @@ int main(int argc, char** argv)
     shortestPath->findShortestPath(graph, elevation, overrides, roverLoc, bachelorLoc);
     shortestPath->findShortestPath(graph, elevation, overrides, bachelorLoc, weddingLoc);
 
-
-    // for (int i = 0; i < imageDimension; i++)
-    // {
-    //     for (int j = 0; j < imageDimension; j++)
-    //     {
-    //         if (grid(i, j).path == true)
-    //         {
-    //             std::cout << "X: " << j << " Y: " << i << std::endl; 
-    //         }
-    //     }
-    //     // std::cout << std::endl;
-    // }
-
-
     std::ofstream of("pic.bmp", std::ofstream::binary);
-    // std::cout << "HERE: " << std::endl;
 
     auto pixelFilter = [&graph, &overrides, &imageDimension, &roverLoc, &bachelorLoc, &weddingLoc] (size_t x, size_t y, uint8_t elevation) 
     {
@@ -189,8 +162,7 @@ int main(int argc, char** argv)
         }
         
         // Signifies water
-        if ((overrides(y, x) & (OF_WATER_BASIN | OF_RIVER_MARSH)) ||
-            elevation == 0)
+        if ((overrides(y, x) & (OF_WATER_BASIN | OF_RIVER_MARSH)) || elevation == 0)
         {
             return uint8_t(visualizer::IPV_WATER);
         }

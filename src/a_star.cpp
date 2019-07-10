@@ -16,16 +16,16 @@ template <typename  T, typename P>
 AStar<T,P>::AStar(const std::string& downHillCostModel, const std::string& upHillCostModel, const std::string& heuristicModel): 
     ShortestPath<T,P>(downHillCostModel, upHillCostModel), m_heuristicEstimator()
 {
-    // auto it = m_heuristicEstimator.allModels.find(heuristicModel);
-    // if (it != m_heuristicEstimator.allModels.end())
-    // {
-    //     m_heuristicModel = m_heuristicEstimator.allModels[heuristicModel];
-    // }
-    // else
-    // {
-    //     throw std::runtime_error("doesn't support your mode");
-    // }
-    m_heuristicModel = Heuristic::HeuristicModel::DiagonalAltitude;
+    auto it = m_heuristicEstimator.allModels.find(heuristicModel);
+    if (it != m_heuristicEstimator.allModels.end())
+    {
+        m_heuristicModel = m_heuristicEstimator.allModels[heuristicModel];
+    }
+    else
+    {
+        throw std::runtime_error("doesn't support your heuristic model");
+    }
+    // m_heuristicModel = Heuristic::HeuristicModel::DiagonalAltitude;
 }
 
 template <typename  T, typename P>
@@ -50,8 +50,9 @@ void AStar<T,P>::findShortestPath(SquareGridGraph<T, P>& graph,
     // reset member variables for a new path 
     ShortestPath<T,P>::resetMemberVariables();
 
+    // compute average of altitude based on the heuristic model
     const double aveAltitude = computeAverageAltitudeInPath(source, target, elevation, overrides);
-    std::cout << "ave altitude: " << aveAltitude << std::endl;
+    // std::cout << "ave altitude: " << aveAltitude << std::endl;
 
     // get the source cell and put in PQ as start point
     auto& sourceCell = graph(source.Y(), source.X());
@@ -85,7 +86,7 @@ void AStar<T,P>::findShortestPath(SquareGridGraph<T, P>& graph,
 
         std::vector<P> neighbours;
         neighbours.reserve(8);
-        graph.findNeighbours(currentCell.getLoc(), overrides, neighbours);
+        graph.findNeighbours(currentCell.getLoc(), overrides, elevation, neighbours);
         for (const auto& next : neighbours) 
         {
             auto& nextNode = graph(next);
@@ -195,10 +196,10 @@ const double AStar<T,P>::computeAverageAltitudeInPath (const P& source,
                                                 const Matrix<uint8_t>& overrides)
 {
 
-    // if (m_heuristicModel == m_heuristicEstimator.HeuristicModel::L1 ||  m_heuristicModel == m_heuristicEstimator.HeuristicModel::L2 || m_heuristicModel == m_heuristicEstimator.HeuristicModel::Diagonal)
-        // return 1.0;
-    // else
-    // {
+    if (m_heuristicModel == Heuristic::HeuristicModel::L1 ||  m_heuristicModel == Heuristic::HeuristicModel::L2 || m_heuristicModel == Heuristic::HeuristicModel::Diagonal)
+        return 1.0;
+    else
+    {
         const double step = std::min(std::abs(target.Y() - source.Y()), std::abs(target.X() - source.X()));
 
         const int32_t minRow = target.Y() - source.Y();
@@ -227,7 +228,7 @@ const double AStar<T,P>::computeAverageAltitudeInPath (const P& source,
         }
         const double minmax = maximum - minimum;
         return  (minmax * 2 / cnt) + (cnt / (minmax * 2));
-    // }
+    }
 }
 
 

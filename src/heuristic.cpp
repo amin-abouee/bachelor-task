@@ -4,7 +4,6 @@
 
 Heuristic::Heuristic()
 {
-    std::map< std::string, Heuristic::HeuristicModel > allModels;
     allModels["dijkstra"] = Heuristic::HeuristicModel::Dijkstra;
     allModels["l1"] = Heuristic::HeuristicModel::L1;
     allModels["l2"] = Heuristic::HeuristicModel::L2;
@@ -12,7 +11,7 @@ Heuristic::Heuristic()
     allModels["l1-altitude"] = Heuristic::HeuristicModel::L1Altitude;
     allModels["l2-altitude"] = Heuristic::HeuristicModel::L2Altitude;
     allModels["diagonal-altitude"] = Heuristic::HeuristicModel::DiagonalAltitude;
-    allModels["theta-star"] = Heuristic::HeuristicModel::ThetaStar;
+    // allModels["theta-star"] = Heuristic::HeuristicModel::ThetaStar;
 
     // {
     //     std::make_pair( "dijkstra", Heuristic::HeuristicModel::Dijkstra ),
@@ -54,8 +53,8 @@ double Heuristic::computeHeuristic(const CellLocation& source,
         case HeuristicModel::DiagonalAltitude:
             return computeDiagonal( source, target, model, aveAltitude );
 
-        case HeuristicModel::ThetaStar:
-            return computeThetaStar( source, target, model, aveAltitude );
+        // case HeuristicModel::ThetaStar:
+            // return computeThetaStar( source, target, model, aveAltitude );
     }
 }
 
@@ -96,53 +95,3 @@ double Heuristic::computeDiagonal( const CellLocation& source,
     const auto dy = abs(target.Y() - source.Y());
     return (std::max(dx, dy) + (std::sqrt(2.0) - 1) * std::min(dx, dy)) * aveAltitude;
 }
-
-// double Heuristic::computeL1Altitude( const CellLocation& source, 
-//                     const CellLocation& target,
-//                     const HeuristicModel& model,
-// const double aveAltitude )
-// {
-//     const double aveAltitude = computeAverageAltitude(source, target, elevation, overrides);
-//     std::cout << "ave altitude: " << aveAltitude << std::endl;
-//     const auto dx = abs(target.X() - source.X());
-//     const auto dy = abs(target.Y() - source.Y());
-//     return (dx + dy) * aveAltitude;
-// }
-
-// double Heuristic::computeL2Altitude( const CellLocation& source, 
-//                     const CellLocation& target,
-//                     const HeuristicModel& model,
-// const double aveAltitude )
-// {
-//     const double aveAltitude = computeAverageAltitude(source, target, elevation, overrides);
-//     const auto dx = abs(target.X() - source.X());
-//     const auto dy = abs(target.Y() - source.Y());
-//     return std::sqrt(dx*dx + dy*dy) * aveAltitude;
-// }
-
-// double Heuristic::computeDiagonalAltitude( const CellLocation& source, 
-//                     const CellLocation& target,
-//                     const HeuristicModel& model,
-// const double aveAltitude )
-// {
-//     const double aveAltitude = computeAverageAltitude(source, target, elevation, overrides);
-//     const auto dx = abs(target.X() - source.X());
-//     const auto dy = abs(target.Y() - source.Y());
-//     return (std::max(dx, dy) + (std::sqrt(2.0) - 1) * std::min(dx, dy)) * aveAltitude;
-// }
-
-double Heuristic::computeThetaStar( const CellLocation& source, 
-                    const CellLocation& target,
-                    const HeuristicModel& model,
-                    const double aveAltitude )
-{
-    return 2.0;
-}
-
-// double Heuristic::computeAverageAltitude(const CellLocation& source, 
-//                         const CellLocation& target, 
-//                         const Matrix<uint8_t>& elevation, 
-//                         const Matrix<uint8_t>& overrides)
-// {
-    
-// }

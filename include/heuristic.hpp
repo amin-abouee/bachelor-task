@@ -37,8 +37,7 @@ public:
         Diagonal           = 3,
         L1Altitude         = 4,
         L2Altitude         = 5,
-        DiagonalAltitude   = 6,
-        ThetaStar          = 7
+        DiagonalAltitude   = 6
     };
 
     ///C'tor
@@ -95,27 +94,7 @@ public:
     double computeDiagonal( const CellLocation& source, 
                         const CellLocation& target, 
                         const HeuristicModel& model ,
-                        const double aveAltitude); 
-
-    // double computeL1Altitude( const CellLocation& source, 
-    //                     const CellLocation& target, 
-    //                     const HeuristicModel& model ,
-    //                     const double aveAltitude); 
-
-    // double computeL2Altitude( const CellLocation& source, 
-    //                     const CellLocation& target, 
-    //                     const HeuristicModel& model ,
-    //                     const double aveAltitude); 
-
-    // double computeDiagonalAltitude( const CellLocation& source, 
-    //                     const CellLocation& target, 
-    //                     const HeuristicModel& model ,
-    //                     const double aveAltitude); 
-    
-    double computeThetaStar( const CellLocation& source, 
-                        const CellLocation& target, 
-                        const HeuristicModel& model,
-                        const double aveAltitude );
+                        const double aveAltitude);
 
 private:
     // double computeAverageAltitude(const CellLocation& source, 
